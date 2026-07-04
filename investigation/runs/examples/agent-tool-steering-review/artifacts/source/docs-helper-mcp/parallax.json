@@ -1,0 +1,3 @@
+{
+  "expectedCapabilities": ["CAP-NET", "CAP-FS-READ"]
+}

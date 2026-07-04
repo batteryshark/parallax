@@ -1,0 +1,52 @@
+schema_version: parallax-signature-pack/v1
+id: parallax.core-surfaces.examples
+name: Core surface signature examples
+version: 0.1.0
+status: draft
+description: Worked examples for the signature-pack schema.
+owners:
+  - parallax-taxonomy
+signatures:
+  - id: sig.exec.shell.universal.system
+    atom: EXEC.SHELL
+    surface: callee
+    method: static-source
+    languages: ["c", "cpp", "php", "ruby", "shell", "r"]
+    match:
+      mode: base
+      values: ["system", "popen", "shell_exec", "passthru"]
+      normalize: ["lowercase", "member_separators"]
+    confidence: 0.78
+    summary: shell command execution
+    notes: Plain callee mapping with no context gate.
+
+  - id: sig.exec.shell.javascript.child-process-exec
+    atom: EXEC.SHELL
+    surface: callee
+    method: static-source
+    languages: ["javascript", "typescript", "tsx"]
+    match:
+      mode: exact_or_suffix
+      values: ["exec", "execSync", "child_process.exec", "cp.exec"]
+      normalize: ["member_separators"]
+    requires_context:
+      scope: file
+      any_text: ["child_process"]
+      on_missing: drop
+      note: Drop ambiguous exec calls when there is no child_process evidence.
+    confidence: 0.85
+    summary: shell command execution
+    notes: Gated callee mapping that avoids RegExp.exec and local helper false positives.
+
+  - id: sig.cred.cloud.metadata-endpoint
+    atom: CRED.CLOUD
+    surface: content
+    method: static-source
+    languages: ["*"]
+    regex: "169\\.254\\.169\\.254|metadata\\.google\\.internal|metadata\\.azure\\.com|100\\.100\\.100\\.200|/var/run/secrets/kubernetes\\.io"
+    regex_flags: []
+    confidence: 0.70
+    summary: cloud instance metadata credential endpoint
+    cap_per_file: 10
+    notes: Content regex mapping for text or extracted strings; engine owns snippet extraction and caps enforcement.
+

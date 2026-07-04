@@ -1,0 +1,9 @@
+Parallax Taxonomy
+Copyright 2026 Mario Mercaldi
+
+This product includes documentation and data developed for the Parallax
+project: a tool-agnostic taxonomy for reasoning about what code can do.
+The reference implementation (the prlx engine and products) is distributed
+separately at https://github.com/batteryshark/parallax.
+
+Licensed under the Apache License, Version 2.0. See the LICENSE file.

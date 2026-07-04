@@ -1,0 +1,10 @@
+# This repository is primarily a written taxonomy. GitHub Linguist otherwise
+# reports it as Ruby because of the small signature-pack helper script.
+*.md linguist-detectable=true linguist-documentation=false
+*.yaml linguist-detectable=true
+*.json linguist-detectable=true
+scripts/build-signature-json linguist-detectable=false
+
+# Checked-in investigation fixtures are documentation/examples, not the
+# implementation language of the repository.
+investigation/runs/examples/** linguist-documentation=true

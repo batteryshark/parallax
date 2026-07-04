@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "json"
+require "pathname"
+require "yaml"
+
+root = Pathname.new(__dir__).parent
+inputs = ARGV.empty? ? [root.join("signatures/packs/source-callees.yaml").to_s] : ARGV
+
+inputs.each do |input|
+  yaml_path = Pathname.new(input)
+  yaml_path = root.join(yaml_path) unless yaml_path.absolute?
+  unless yaml_path.file?
+    warn "signature pack not found: #{yaml_path}"
+    exit 1
+  end
+
+  data = YAML.safe_load(yaml_path.read, permitted_classes: [], aliases: false)
+  unless data.is_a?(Hash) && data["schema_version"] == "parallax-signature-pack/v1"
+    warn "not a parallax signature pack: #{yaml_path}"
+    exit 1
+  end
+
+  json_path = yaml_path.sub_ext(".json")
+  json_path.write(JSON.pretty_generate(data) + "\n")
+  puts "wrote #{json_path.relative_path_from(root)}"
+end

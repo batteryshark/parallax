@@ -1,0 +1,407 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parallax.taxonomy/signatures/signature-pack.schema.json",
+  "title": "Parallax Signature Pack",
+  "description": "Versioned signature pack format for mapping stable code surfaces to Parallax ontology atoms.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "name",
+    "version",
+    "status",
+    "signatures"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "parallax-signature-pack/v1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "experimental",
+        "stable",
+        "deprecated"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "owners": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "observation_gates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/observation_gate"
+      }
+    },
+    "signatures": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/signature"
+      }
+    }
+  },
+  "$defs": {
+    "atom": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9]*\\.[A-Z][A-Z0-9_]*$"
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^(\\*|[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*)$"
+    },
+    "string_list": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "atom",
+        "surface",
+        "method",
+        "languages",
+        "confidence",
+        "summary"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^sig\\.[a-z0-9][a-z0-9_.-]*$"
+        },
+        "atom": {
+          "$ref": "#/$defs/atom"
+        },
+        "surface": {
+          "type": "string",
+          "enum": [
+            "callee",
+            "content"
+          ]
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "static-source",
+            "static-binary",
+            "package-metadata"
+          ]
+        },
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/language"
+          },
+          "uniqueItems": true
+        },
+        "match": {
+          "$ref": "#/$defs/callee_match"
+        },
+        "regex": {
+          "type": "string",
+          "minLength": 1
+        },
+        "regex_flags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "ignore_case",
+              "multiline",
+              "dotall"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "requires_context": {
+          "$ref": "#/$defs/context_gate"
+        },
+        "cap_per_file": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "notes": {
+          "type": "string"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "surface": {
+                "const": "callee"
+              }
+            },
+            "required": [
+              "surface"
+            ]
+          },
+          "then": {
+            "required": [
+              "match"
+            ],
+            "not": {
+              "required": [
+                "regex"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "surface": {
+                "const": "content"
+              }
+            },
+            "required": [
+              "surface"
+            ]
+          },
+          "then": {
+            "required": [
+              "regex"
+            ],
+            "not": {
+              "required": [
+                "match"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "callee_match": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "values"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "exact",
+            "base",
+            "suffix",
+            "exact_or_suffix",
+            "substring",
+            "regex"
+          ]
+        },
+        "values": {
+          "$ref": "#/$defs/string_list"
+        },
+        "case_sensitive": {
+          "type": "boolean"
+        },
+        "normalize": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "lowercase",
+              "member_separators",
+              "strip_call_suffix"
+            ]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "context_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "on_missing"
+      ],
+      "properties": {
+        "scope": {
+          "type": "string",
+          "enum": [
+            "file",
+            "package",
+            "project"
+          ]
+        },
+        "all_text": {
+          "$ref": "#/$defs/string_list"
+        },
+        "any_text": {
+          "$ref": "#/$defs/string_list"
+        },
+        "none_text": {
+          "$ref": "#/$defs/string_list"
+        },
+        "imports_any": {
+          "$ref": "#/$defs/string_list"
+        },
+        "imports_all": {
+          "$ref": "#/$defs/string_list"
+        },
+        "path_any": {
+          "$ref": "#/$defs/string_list"
+        },
+        "path_none": {
+          "$ref": "#/$defs/string_list"
+        },
+        "on_missing": {
+          "type": "string",
+          "enum": [
+            "drop",
+            "downweight",
+            "tag"
+          ]
+        },
+        "downweight_multiplier": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "all_text"
+          ]
+        },
+        {
+          "required": [
+            "any_text"
+          ]
+        },
+        {
+          "required": [
+            "none_text"
+          ]
+        },
+        {
+          "required": [
+            "imports_any"
+          ]
+        },
+        {
+          "required": [
+            "imports_all"
+          ]
+        },
+        {
+          "required": [
+            "path_any"
+          ]
+        },
+        {
+          "required": [
+            "path_none"
+          ]
+        }
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "on_missing": {
+                "const": "downweight"
+              }
+            },
+            "required": [
+              "on_missing"
+            ]
+          },
+          "then": {
+            "required": [
+              "downweight_multiplier"
+            ]
+          }
+        }
+      ]
+    },
+    "observation_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "atom",
+        "languages",
+        "requires_context"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^gate\\.[a-z0-9][a-z0-9_.-]*$"
+        },
+        "atom": {
+          "$ref": "#/$defs/atom"
+        },
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/language"
+          },
+          "uniqueItems": true
+        },
+        "requires_context": {
+          "$ref": "#/$defs/context_gate"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "parallax-taxonomy-run-example/v1",
+  "example": "agent-tool-steering-review",
+  "fixture": "artifacts/source/docs-helper-mcp",
+  "commands": [
+    "prlx-mcd artifacts/source/docs-helper-mcp",
+    "prlx-agent-risk artifacts/source/docs-helper-mcp",
+    "prlx-understand artifacts/source/docs-helper-mcp"
+  ],
+  "observations": [
+    {
+      "atom": "AITM.TOOL",
+      "path": "mcp.json",
+      "confidence": 0.8,
+      "summary": "AI tool / MCP tool definitions present"
+    },
+    {
+      "atom": "AITM.INJECT",
+      "path": "mcp.json",
+      "confidence": 0.7,
+      "summary": "Instruction-override / deception text in a tool description"
+    },
+    {
+      "atom": "EXEC.PROC",
+      "path": "server.py",
+      "confidence": 0.85,
+      "summary": "Child process execution via subprocess.run()"
+    },
+    {
+      "atom": "NETW.HTTP",
+      "path": "server.py",
+      "confidence": 0.8,
+      "summary": "Outbound HTTP request via urlopen()"
+    }
+  ],
+  "lensReadings": {
+    "mcd": {
+      "findingCount": 1,
+      "highestSeverity": "high",
+      "disposition": "review",
+      "composition": "BP-AGENTMANIP",
+      "confidence": 0.5,
+      "attenuator": "Component-level co-location: tool-bound steering and payload surface share a component, but agent-to-tool reachability is not proven.",
+      "verificationQuestion": "Can an agent that reads the content invoke the payload-capable path?"
+    },
+    "agentRisk": {
+      "headline": "1 target can complete an abuse path alone; no additional cross-skill pairings were found.",
+      "targets": 1,
+      "capabilityBearing": 1,
+      "steerable": 1,
+      "selfSufficientTargets": ["."],
+      "composition": "RCE",
+      "recommendation": "Gate or sandbox the root target before enabling it for an agent."
+    },
+    "understand": {
+      "headline": "Start with Remote-execution-capable; mapped 8 capabilities, 1 decision points, 2 brittle points, and 5 surprises.",
+      "firstLead": "Remote-execution-capable"
+    }
+  }
+}
