@@ -188,6 +188,35 @@
       "notes": "Extracted from _UNIVERSAL_RULES."
     },
     {
+      "id": "sig.exec.shell.javascript.child-process-exec",
+      "atom": "EXEC.SHELL",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "javascript",
+        "typescript",
+        "tsx"
+      ],
+      "match": {
+        "mode": "exact_or_suffix",
+        "values": [
+          "exec",
+          "execSync",
+          "child_process.exec",
+          "child_process.execSync",
+          "cp.exec",
+          "cp.execSync"
+        ],
+        "normalize": [
+          "member_separators"
+        ]
+      },
+      "confidence": 0.85,
+      "summary": "shell command execution",
+      "priority": 60,
+      "notes": "child_process shell entry points; pairs with gate.exec.shell.javascript.child-process to drop RegExp.exec and local-helper false positives when no child_process evidence is present."
+    },
+    {
       "id": "sig.exec.proc.universal.base.createprocess",
       "atom": "EXEC.PROC",
       "surface": "callee",

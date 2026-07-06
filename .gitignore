@@ -1,1 +1,10 @@
 .claude/worktrees/
+
+# Python / SDK
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
