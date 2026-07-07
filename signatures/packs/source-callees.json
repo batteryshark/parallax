@@ -2,7 +2,7 @@
   "schema_version": "parallax-signature-pack/v1",
   "id": "parallax.source-callees",
   "name": "Source callee signatures",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "status": "experimental",
   "description": "Durable callee-to-atom mappings extracted from the Parallax reference engine rules tables.",
   "owners": [
@@ -154,6 +154,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -242,6 +243,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -308,6 +310,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -363,6 +366,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -414,6 +418,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -464,6 +469,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -520,6 +526,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -573,6 +580,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -625,6 +633,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -678,6 +687,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -741,6 +751,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -792,6 +803,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -846,6 +858,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -897,6 +910,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -951,6 +965,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -1005,6 +1020,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -1062,6 +1078,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -1115,6 +1132,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -1168,6 +1186,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -1223,6 +1242,7 @@
         "perl",
         "php",
         "powershell",
+        "python",
         "r",
         "ruby",
         "rust",
@@ -2628,6 +2648,298 @@
       "summary": "process execution (ProcessBuilder)",
       "priority": 100,
       "notes": "Extracted from _LANG_RULES.kotlin."
+    },
+    {
+      "id": "sig.exec.proc.python.subprocess",
+      "atom": "EXEC.PROC",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "python"
+      ],
+      "match": {
+        "mode": "substring",
+        "values": [
+          "subprocess.run",
+          "subprocess.popen",
+          "subprocess.call",
+          "subprocess.check_output",
+          "subprocess.check_call",
+          "subprocess.getoutput",
+          "os.spawnv",
+          "os.execv",
+          "pty.spawn"
+        ]
+      },
+      "confidence": 0.8,
+      "summary": "process execution (subprocess)",
+      "notes": "Python module.method callees (restores coverage dropped in extraction)."
+    },
+    {
+      "id": "sig.netw.http.python.clients",
+      "atom": "NETW.HTTP",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "python"
+      ],
+      "match": {
+        "mode": "substring",
+        "values": [
+          "requests.",
+          "httpx.",
+          "aiohttp.",
+          "urllib.request",
+          "urllib3.",
+          "http.client",
+          "urlopen",
+          "session.get",
+          "session.post"
+        ]
+      },
+      "confidence": 0.75,
+      "summary": "outbound HTTP request",
+      "notes": "Python module.method callees (restores coverage dropped in extraction)."
+    },
+    {
+      "id": "sig.netw.socket.python",
+      "atom": "NETW.SOCKET",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "python"
+      ],
+      "match": {
+        "mode": "substring",
+        "values": [
+          "socket.socket",
+          "socket.create_connection",
+          "asyncio.open_connection"
+        ]
+      },
+      "confidence": 0.7,
+      "summary": "raw network socket",
+      "notes": "Python module.method callees (restores coverage dropped in extraction)."
+    },
+    {
+      "id": "sig.load.deser.python",
+      "atom": "LOAD.DESER",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "python"
+      ],
+      "match": {
+        "mode": "substring",
+        "values": [
+          "pickle.load",
+          "pickle.loads",
+          "yaml.load",
+          "marshal.load",
+          "marshal.loads",
+          "dill.load",
+          "joblib.load"
+        ]
+      },
+      "confidence": 0.75,
+      "summary": "unsafe deserialization",
+      "notes": "Python module.method callees (restores coverage dropped in extraction)."
+    },
+    {
+      "id": "sig.load.import.python",
+      "atom": "LOAD.IMPORT",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "python"
+      ],
+      "match": {
+        "mode": "substring",
+        "values": [
+          "importlib.import_module",
+          "__import__",
+          "importlib.util.spec_from_file_location",
+          "imp.load_source"
+        ]
+      },
+      "confidence": 0.62,
+      "summary": "dynamic import / module load",
+      "notes": "Python module.method callees (restores coverage dropped in extraction)."
+    },
+    {
+      "id": "sig.fsys.write.python",
+      "atom": "FSYS.WRITE",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "python"
+      ],
+      "match": {
+        "mode": "substring",
+        "values": [
+          "os.remove",
+          "os.unlink",
+          "os.rename",
+          "shutil.rmtree",
+          "shutil.move",
+          "shutil.copy",
+          "os.chmod"
+        ]
+      },
+      "confidence": 0.66,
+      "summary": "filesystem write / mutation",
+      "notes": "Python module.method callees (restores coverage dropped in extraction)."
+    },
+    {
+      "id": "sig.netw.http.js.fetch",
+      "atom": "NETW.HTTP",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "javascript",
+        "typescript",
+        "tsx"
+      ],
+      "match": {
+        "mode": "base",
+        "values": [
+          "fetch",
+          "sendbeacon"
+        ]
+      },
+      "confidence": 0.7,
+      "summary": "outbound HTTP request (fetch/beacon)",
+      "notes": "JS/TS client callees (restores coverage dropped in extraction)."
+    },
+    {
+      "id": "sig.netw.http.js.clients",
+      "atom": "NETW.HTTP",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "javascript",
+        "typescript",
+        "tsx"
+      ],
+      "match": {
+        "mode": "substring",
+        "values": [
+          "https.get",
+          "https.request",
+          "http.get",
+          "http.request",
+          "axios.",
+          "axios(",
+          "node-fetch",
+          "superagent.",
+          "got.",
+          "ky.",
+          "undici",
+          "request("
+        ]
+      },
+      "confidence": 0.72,
+      "summary": "outbound HTTP request (node http client)",
+      "notes": "JS/TS client callees (restores coverage dropped in extraction)."
+    },
+    {
+      "id": "sig.netw.ws.js",
+      "atom": "NETW.WS",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "javascript",
+        "typescript",
+        "tsx"
+      ],
+      "match": {
+        "mode": "substring",
+        "values": [
+          "new websocket",
+          "websocket(",
+          "new ws(",
+          "socket.io"
+        ]
+      },
+      "confidence": 0.6,
+      "summary": "WebSocket channel",
+      "notes": "JS/TS client callees (restores coverage dropped in extraction)."
+    },
+    {
+      "id": "sig.exec.proc.js",
+      "atom": "EXEC.PROC",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "javascript",
+        "typescript",
+        "tsx"
+      ],
+      "match": {
+        "mode": "substring",
+        "values": [
+          "child_process.spawn",
+          "child_process.execsync",
+          "child_process.spawnsync",
+          "child_process.fork",
+          "execsync(",
+          "spawnsync(",
+          "execa(",
+          ".spawn("
+        ]
+      },
+      "confidence": 0.78,
+      "summary": "child process execution",
+      "notes": "JS/TS client callees (restores coverage dropped in extraction)."
+    },
+    {
+      "id": "sig.fsys.write.js",
+      "atom": "FSYS.WRITE",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "javascript",
+        "typescript",
+        "tsx"
+      ],
+      "match": {
+        "mode": "substring",
+        "values": [
+          "fs.writefile",
+          "writefilesync",
+          "fs.appendfile",
+          "appendfilesync",
+          "fs.rm(",
+          "fs.rmsync",
+          "fs.unlink",
+          "unlinksync",
+          "fs.rmdir",
+          "outputfile"
+        ]
+      },
+      "confidence": 0.68,
+      "summary": "filesystem write / delete",
+      "notes": "JS/TS client callees (restores coverage dropped in extraction)."
+    },
+    {
+      "id": "sig.load.eval.js",
+      "atom": "LOAD.EVAL",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "javascript",
+        "typescript",
+        "tsx"
+      ],
+      "match": {
+        "mode": "base",
+        "values": [
+          "eval"
+        ]
+      },
+      "confidence": 0.78,
+      "summary": "dynamic code evaluation (eval)",
+      "notes": "JS/TS client callees (restores coverage dropped in extraction)."
     }
   ]
 }
