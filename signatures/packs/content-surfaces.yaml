@@ -1,7 +1,7 @@
 schema_version: parallax-signature-pack/v1
 id: parallax.content-surfaces
 name: Content and extracted-string surfaces
-version: 0.2.0
+version: 0.3.0
 status: draft
 signatures:
 - id: sig.content.ftp-url
@@ -936,3 +936,103 @@ signatures:
   confidence: 0.5
   summary: 'direct system call (bypasses library wrappers): {match_strip}'
   notes: Extracted from rules.py scan_strings (_EXEC_SYSCALL_RE).
+- id: sig.content.cred.cloud.credential-path
+  atom: CRED.CLOUD
+  surface: content
+  method: static-source
+  languages:
+  - '*'
+  regex: \.aws/credentials|\.aws/config|\.ssh/id_[a-z0-9]+|\.config/gcloud|application_default_credentials|\.azure[/\\]|\.netrc|\.docker/config\.json|\.kube/config
+  confidence: 0.65
+  summary: 'reference to a credential file path: {match}'
+  notes: Extracted from rules.py scan_strings (_CRED_PATH_RE).
+- id: sig.content.artf.url
+  atom: ARTF.URL
+  surface: content
+  method: static-source
+  languages:
+  - '*'
+  regex: https?://[^\s\"'`)\]]+
+  confidence: 0.7
+  summary: embedded URL literal
+  notes: Extracted from rules.py scan_strings (_URL_RE).
+  cap_per_file: 10
+- id: sig.content.artf.ip
+  atom: ARTF.IP
+  surface: content
+  method: static-source
+  languages:
+  - '*'
+  regex: \b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b
+  confidence: 0.4
+  summary: hardcoded IP address
+  notes: Extracted from rules.py scan_strings (_IP_RE).
+  cap_per_file: 8
+- id: sig.content.artf.email
+  atom: ARTF.EMAIL
+  surface: content
+  method: static-source
+  languages:
+  - '*'
+  regex: \b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b
+  confidence: 0.4
+  summary: hardcoded email address
+  notes: Extracted from rules.py scan_strings (_EMAIL_RE).
+  cap_per_file: 8
+- id: sig.content.artf.crypto-addr
+  atom: ARTF.CRYPTO_ADDR
+  surface: content
+  method: static-source
+  languages:
+  - '*'
+  regex: \b(?:bc1[a-z0-9]{20,60}|0x[a-fA-F0-9]{40}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})\b
+  confidence: 0.7
+  summary: cryptocurrency address literal
+  notes: Extracted from rules.py scan_strings (_CRYPTO_ADDR_RE).
+  cap_per_file: 4
+- id: sig.content.artf.domain
+  atom: ARTF.DOMAIN
+  surface: content
+  method: static-source
+  languages:
+  - '*'
+  regex: (?<![\w@:/-])(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+(?:com|net|org|io|dev|app|co|cloud|info|biz|ru|cn|uk|de|fr|jp|br|au|ca|us|gov|edu|mil|onion)\b
+  confidence: 0.3
+  summary: standalone domain literal
+  notes: Extracted from rules.py scan_strings (_DOMAIN_RE).
+  regex_flags:
+  - ignore_case
+  cap_per_file: 6
+- id: sig.content.artf.hash
+  atom: ARTF.HASH
+  surface: content
+  method: static-source
+  languages:
+  - '*'
+  regex: \b(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64}|[A-Fa-f0-9]{96}|[A-Fa-f0-9]{128})\b
+  confidence: 0.35
+  summary: hash / digest literal
+  notes: Extracted from rules.py scan_strings (_HASH_RE).
+  cap_per_file: 6
+- id: sig.content.artf.timestamp-iso
+  atom: ARTF.TIMESTAMP
+  surface: content
+  method: static-source
+  languages:
+  - '*'
+  regex: \b(?:19|20)\d{2}-[01]\d-[0-3]\d[T ][0-2]\d:[0-5]\d(?::[0-5]\d(?:\.\d{1,9})?)?(?:Z|[+-][0-2]\d:?[0-5]\d)\b
+  confidence: 0.3
+  summary: fixed timestamp literal
+  notes: Extracted from rules.py scan_strings (_TIMESTAMP_ISO_RE).
+  cap_per_file: 6
+- id: sig.content.artf.timestamp-epoch
+  atom: ARTF.TIMESTAMP
+  surface: content
+  method: static-source
+  languages:
+  - '*'
+  regex: \b(?:9[5-9]\d{8}|1\d{9}|2\d{9}|3\d{9}|4[01]\d{8}|1[0-9]{12})\b
+  confidence: 0.3
+  summary: fixed epoch timestamp literal
+  notes: Extracted from rules.py scan_strings (_TIMESTAMP_EPOCH_RE).
+  cap_per_file: 6
