@@ -1,0 +1,25 @@
+{
+  "lockfile_names": [
+    "Cargo.lock",
+    "Gemfile.lock",
+    "Pipfile.lock",
+    "composer.lock",
+    "go.sum",
+    "npm-shrinkwrap.json",
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    "poetry.lock",
+    "uv.lock",
+    "yarn.lock"
+  ],
+  "source_hosts": [
+    "crates.io",
+    "files.pythonhosted.org",
+    "packagist.org",
+    "proxy.golang.org",
+    "pypi.org",
+    "registry.npmjs.org",
+    "repo.packagist.org",
+    "rubygems.org"
+  ]
+}
