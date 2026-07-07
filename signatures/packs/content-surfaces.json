@@ -2,7 +2,7 @@
   "schema_version": "parallax-signature-pack/v1",
   "id": "parallax.content-surfaces",
   "name": "Content and extracted-string surfaces",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "status": "draft",
   "signatures": [
     {
@@ -1301,7 +1301,16 @@
       "regex_flags": [
         "ignore_case"
       ],
-      "cap_per_file": 6
+      "cap_per_file": 6,
+      "requires_context": {
+        "any_regex": [
+          "(?:\\b(?:domain|host|hostname|server|endpoint|callback|webhook|c2|dns|ioc|allowlist|blocklist|denylist|proxy|connect|exfil|beacon|issuer|subjectaltname|san)\\b|[A-Za-z_]*(?:domain|host|endpoint|callback|webhook|beacon)[A-Za-z_]*)"
+        ],
+        "on_missing": "drop",
+        "regex_flags": [
+          "ignore_case"
+        ]
+      }
     },
     {
       "id": "sig.content.artf.hash",
@@ -1329,7 +1338,16 @@
       "confidence": 0.3,
       "summary": "fixed timestamp literal",
       "notes": "Extracted from rules.py scan_strings (_TIMESTAMP_ISO_RE).",
-      "cap_per_file": 6
+      "cap_per_file": 6,
+      "requires_context": {
+        "any_regex": [
+          "\\b(?:timestamp|time_?stamp|expires(?:_?at)?|expiry|not_?before|not_?after|created_?at|updated_?at|build_?time|compile_?time|compiled|valid_?(?:from|until|to))\\b"
+        ],
+        "on_missing": "drop",
+        "regex_flags": [
+          "ignore_case"
+        ]
+      }
     },
     {
       "id": "sig.content.artf.timestamp-epoch",
@@ -1343,7 +1361,16 @@
       "confidence": 0.3,
       "summary": "fixed epoch timestamp literal",
       "notes": "Extracted from rules.py scan_strings (_TIMESTAMP_EPOCH_RE).",
-      "cap_per_file": 6
+      "cap_per_file": 6,
+      "requires_context": {
+        "any_regex": [
+          "\\b(?:timestamp|time_?stamp|expires(?:_?at)?|expiry|not_?before|not_?after|created_?at|updated_?at|build_?time|compile_?time|compiled|valid_?(?:from|until|to))\\b"
+        ],
+        "on_missing": "drop",
+        "regex_flags": [
+          "ignore_case"
+        ]
+      }
     }
   ]
 }

@@ -285,6 +285,21 @@
         "any_text": {
           "$ref": "#/$defs/string_list"
         },
+        "any_regex": {
+          "$ref": "#/$defs/string_list"
+        },
+        "regex_flags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "ignore_case",
+              "multiline",
+              "dotall"
+            ]
+          },
+          "uniqueItems": true
+        },
         "none_text": {
           "$ref": "#/$defs/string_list"
         },
@@ -326,6 +341,11 @@
         {
           "required": [
             "any_text"
+          ]
+        },
+        {
+          "required": [
+            "any_regex"
           ]
         },
         {
