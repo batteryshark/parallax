@@ -1,0 +1,184 @@
+[
+  {
+    "id": "CAP-EXEC",
+    "label": "Command / process execution",
+    "atoms": [
+      "EXEC.SHELL",
+      "EXEC.PROC",
+      "EXEC.INJECT",
+      "EXEC.TERMINATE",
+      "EXEC.SYSCALL"
+    ],
+    "severity": "high",
+    "reach": "run shell commands or spawn processes",
+    "guardrails": [
+      "Sandbox execution",
+      "Remove process-spawn ability",
+      "Allowlist permitted commands"
+    ]
+  },
+  {
+    "id": "CAP-BROWSER",
+    "label": "Browser automation",
+    "atoms": [
+      "EXEC.BROWSER"
+    ],
+    "severity": "high",
+    "reach": "drive a real browser: navigate, scrape, fill and submit forms, run page scripts, and reach authenticated sessions",
+    "guardrails": [
+      "Run headless with a throwaway profile",
+      "Allowlist navigable origins",
+      "Never attach to the user's real browser profile or cookies"
+    ]
+  },
+  {
+    "id": "CAP-DYNLOAD",
+    "label": "Dynamic code loading",
+    "atoms": [
+      "LOAD"
+    ],
+    "severity": "high",
+    "reach": "load and run code chosen at runtime",
+    "guardrails": [
+      "Disable eval / dynamic import",
+      "Pin loadable modules to an allowlist"
+    ]
+  },
+  {
+    "id": "CAP-CRED",
+    "label": "Credential access",
+    "atoms": [
+      "CRED"
+    ],
+    "severity": "high",
+    "reach": "read credential or secret material",
+    "guardrails": [
+      "Scope secrets to least privilege",
+      "Rotate exposed secrets",
+      "Avoid env-var secrets"
+    ]
+  },
+  {
+    "id": "CAP-PRIV",
+    "label": "Privilege operations",
+    "atoms": [
+      "PRIV"
+    ],
+    "severity": "high",
+    "reach": "request, assume, or exploit elevated privilege",
+    "guardrails": [
+      "Drop privileges",
+      "Run with least authority"
+    ]
+  },
+  {
+    "id": "CAP-PERSIST",
+    "label": "Persistence",
+    "atoms": [
+      "PRST"
+    ],
+    "severity": "high",
+    "reach": "survive process exit, reboot, or session boundaries",
+    "guardrails": [
+      "Remove persistence hooks",
+      "Monitor autostart locations"
+    ]
+  },
+  {
+    "id": "CAP-NET",
+    "label": "Outbound network reach",
+    "atoms": [
+      "NETW.HTTP",
+      "NETW.FTP",
+      "NETW.SOCKET",
+      "NETW.WEBHOOK",
+      "NETW.WS",
+      "NETW.DNS",
+      "NETW.EMAIL",
+      "NETW.GRPC",
+      "NETW.BROKER",
+      "NETW.LISTEN",
+      "NETW.SSE",
+      "NETW.DECENTRAL"
+    ],
+    "severity": "medium",
+    "reach": "send and receive data over the network",
+    "guardrails": [
+      "Egress allowlist",
+      "Pin destinations",
+      "Block network at install time"
+    ]
+  },
+  {
+    "id": "CAP-FS-WRITE",
+    "label": "Filesystem mutation",
+    "atoms": [
+      "FSYS.WRITE",
+      "FSYS.DELETE",
+      "FSYS.PERM",
+      "FSYS.LINK"
+    ],
+    "severity": "medium",
+    "reach": "create, modify, or delete files",
+    "guardrails": [
+      "Restrict writable paths",
+      "Mount the filesystem read-only where possible"
+    ]
+  },
+  {
+    "id": "CAP-INSTALL",
+    "label": "Unsupervised install-time execution",
+    "atoms": [
+      "PKGM.INSTALL",
+      "PKGM.HOOK",
+      "PKGM.BINDOWN"
+    ],
+    "severity": "medium",
+    "reach": "execute code at install time, before any explicit use",
+    "guardrails": [
+      "Install with --ignore-scripts",
+      "Review and vendor the dependency",
+      "Pin and checksum downloaded binaries"
+    ]
+  },
+  {
+    "id": "CAP-AGENT",
+    "label": "Agent-directed content surface",
+    "atoms": [
+      "AITM"
+    ],
+    "severity": "medium",
+    "reach": "shape what an AI agent reads, believes, or does",
+    "guardrails": [
+      "Treat as untrusted input to agents",
+      "Strip / sanitize agent-directed content"
+    ]
+  },
+  {
+    "id": "CAP-FS-READ",
+    "label": "Filesystem read / enumeration",
+    "atoms": [
+      "FSYS.READ",
+      "FSYS.ENUM",
+      "FSYS.SENSITIVE",
+      "FSYS.CLIPBOARD"
+    ],
+    "severity": "low",
+    "reach": "read or enumerate files",
+    "guardrails": [
+      "Restrict readable paths to needed directories"
+    ]
+  },
+  {
+    "id": "CAP-RSRC",
+    "label": "Resource consumption",
+    "atoms": [
+      "RSRC"
+    ],
+    "severity": "low",
+    "reach": "consume CPU, memory, disk, or network capacity",
+    "guardrails": [
+      "Apply resource limits / cgroups"
+    ]
+  }
+]
