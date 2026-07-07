@@ -1,0 +1,50 @@
+[
+  {
+    "magic": "7f454c46",
+    "label": "ELF binary (native executable/library)"
+  },
+  {
+    "magic": "4d5a",
+    "label": "PE binary (Windows executable/DLL)"
+  },
+  {
+    "magic": "feedface",
+    "label": "Mach-O binary"
+  },
+  {
+    "magic": "feedfacf",
+    "label": "Mach-O binary (64-bit)"
+  },
+  {
+    "magic": "cffaedfe",
+    "label": "Mach-O binary (64-bit)"
+  },
+  {
+    "magic": "cefaedfe",
+    "label": "Mach-O binary"
+  },
+  {
+    "magic": "cafebabe",
+    "label": "Java class or Mach-O fat binary"
+  },
+  {
+    "magic": "6465780a",
+    "label": "Android DEX"
+  },
+  {
+    "magic": "0061736d",
+    "label": "WebAssembly module"
+  },
+  {
+    "magic": "504b0304",
+    "label": "ZIP / JAR / archive"
+  },
+  {
+    "magic": "213c617263683e",
+    "label": "static archive (ar)"
+  },
+  {
+    "magic": "edabeedb",
+    "label": "RPM package"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "signature": "55505821",
+    "name": "UPX"
+  },
+  {
+    "signature": "55505830",
+    "name": "UPX"
+  },
+  {
+    "signature": "55505831",
+    "name": "UPX"
+  },
+  {
+    "signature": "41535061636b",
+    "name": "ASPack"
+  },
+  {
+    "signature": "4d505245535331",
+    "name": "MPRESS"
+  },
+  {
+    "signature": "4d505245535332",
+    "name": "MPRESS"
+  },
+  {
+    "signature": "2e7468656d696461",
+    "name": "Themida"
+  },
+  {
+    "signature": "5045436f6d70616374",
+    "name": "PECompact"
+  },
+  {
+    "signature": "46534721",
+    "name": "FSG"
+  },
+  {
+    "signature": "504574697465",
+    "name": "Petite"
+  }
+]
