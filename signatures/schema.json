@@ -105,7 +105,8 @@
           "type": "string",
           "enum": [
             "callee",
-            "content"
+            "content",
+            "binary-import"
           ]
         },
         "method": {
@@ -179,7 +180,10 @@
           "if": {
             "properties": {
               "surface": {
-                "const": "callee"
+                "enum": [
+                  "callee",
+                  "binary-import"
+                ]
               }
             },
             "required": [

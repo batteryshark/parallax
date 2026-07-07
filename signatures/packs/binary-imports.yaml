@@ -1,0 +1,211 @@
+schema_version: parallax-signature-pack/v1
+id: parallax.binary-imports
+name: Binary import-symbol surfaces
+version: 0.1.0
+status: draft
+signatures:
+- id: sig.binary-import.exec-inject
+  atom: EXEC.INJECT
+  surface: binary-import
+  method: static-binary
+  languages:
+  - '*'
+  match:
+    mode: substring
+    values:
+    - virtualallocex
+    - writeprocessmemory
+    - createremotethread
+    - ntmapviewofsection
+    - ptrace
+    - task_for_pid
+  confidence: 0.55
+  summary: process-injection primitive
+  notes: Extracted from bincaps.py _CAP_MAP.
+- id: sig.binary-import.exec-shell
+  atom: EXEC.SHELL
+  surface: binary-import
+  method: static-binary
+  languages:
+  - '*'
+  match:
+    mode: substring
+    values:
+    - system
+    - popen
+    - shellexecute
+    - winexec
+  confidence: 0.55
+  summary: spawns a shell or runs a command line
+  notes: Extracted from bincaps.py _CAP_MAP.
+- id: sig.binary-import.exec-proc
+  atom: EXEC.PROC
+  surface: binary-import
+  method: static-binary
+  languages:
+  - '*'
+  match:
+    mode: substring
+    values:
+    - execve
+    - execvp
+    - execl
+    - execlp
+    - posix_spawn
+    - createprocessa
+    - createprocessw
+  confidence: 0.55
+  summary: creates or replaces a process
+  notes: Extracted from bincaps.py _CAP_MAP.
+- id: sig.binary-import.load-dynamic
+  atom: LOAD.DYNAMIC
+  surface: binary-import
+  method: static-binary
+  languages:
+  - '*'
+  match:
+    mode: substring
+    values:
+    - dlopen
+    - dlsym
+    - loadlibrarya
+    - loadlibraryw
+    - getprocaddress
+  confidence: 0.55
+  summary: loads a library or resolves symbols at runtime
+  notes: Extracted from bincaps.py _CAP_MAP.
+- id: sig.binary-import.netw-socket
+  atom: NETW.SOCKET
+  surface: binary-import
+  method: static-binary
+  languages:
+  - '*'
+  match:
+    mode: substring
+    values:
+    - socket
+    - connect
+    - gethostbyname
+    - getaddrinfo
+    - wsasocket
+    - wsastartup
+    - internetopen
+    - internetconnect
+    - httpsendrequest
+    - urldownloadtofile
+    - winhttpopen
+    - curl_easy_init
+    - inet_addr
+    - inet_pton
+    - recvfrom
+    - sendto
+  confidence: 0.55
+  summary: opens network sockets or connections
+  notes: Extracted from bincaps.py _CAP_MAP.
+- id: sig.binary-import.sysi-registry
+  atom: SYSI.REGISTRY
+  surface: binary-import
+  method: static-binary
+  languages:
+  - '*'
+  match:
+    mode: substring
+    values:
+    - regsetvalue
+    - regcreatekey
+    - regopenkey
+    - regqueryvalue
+    - regdeletekey
+  confidence: 0.55
+  summary: reads or writes the Windows registry
+  notes: Extracted from bincaps.py _CAP_MAP.
+- id: sig.binary-import.prst-service
+  atom: PRST.SERVICE
+  surface: binary-import
+  method: static-binary
+  languages:
+  - '*'
+  match:
+    mode: substring
+    values:
+    - createservicea
+    - createservicew
+    - startservice
+    - openscmanager
+  confidence: 0.55
+  summary: installs or controls a service
+  notes: Extracted from bincaps.py _CAP_MAP.
+- id: sig.binary-import.priv-elevate
+  atom: PRIV.ELEVATE
+  surface: binary-import
+  method: static-binary
+  languages:
+  - '*'
+  match:
+    mode: substring
+    values:
+    - setuid
+    - seteuid
+    - adjusttokenprivileges
+    - openprocesstoken
+    - lookupprivilegevalue
+  confidence: 0.55
+  summary: changes process privilege or token
+  notes: Extracted from bincaps.py _CAP_MAP.
+- id: sig.binary-import.xfrm-encrypt
+  atom: XFRM.ENCRYPT
+  surface: binary-import
+  method: static-binary
+  languages:
+  - '*'
+  match:
+    mode: substring
+    values:
+    - cryptacquirecontext
+    - cryptencrypt
+    - bcryptencrypt
+    - evp_encrypt
+    - evp_decrypt
+    - ssl_connect
+    - ssl_new
+    - ssl_write
+  confidence: 0.55
+  summary: cryptographic primitive
+  notes: Extracted from bincaps.py _CAP_MAP.
+- id: sig.binary-import.fsys-write
+  atom: FSYS.WRITE
+  surface: binary-import
+  method: static-binary
+  languages:
+  - '*'
+  match:
+    mode: substring
+    values:
+    - writefile
+    - createfilea
+    - createfilew
+    - fwrite
+    - unlink
+    - deletefilea
+    - deletefilew
+  confidence: 0.55
+  summary: writes or deletes files
+  notes: Extracted from bincaps.py _CAP_MAP.
+- id: sig.binary-import.fsys-read
+  atom: FSYS.READ
+  surface: binary-import
+  method: static-binary
+  languages:
+  - '*'
+  match:
+    mode: substring
+    values:
+    - readfile
+    - fread
+    - opendir
+    - readdir
+    - findfirstfilea
+    - fopen
+  confidence: 0.55
+  summary: reads files or directories
+  notes: Extracted from bincaps.py _CAP_MAP.
