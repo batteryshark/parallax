@@ -353,7 +353,12 @@ signatures:
   regex: /\.ssh/|\bid_rsa\b|\bid_ed25519\b|\bid_ecdsa\b|\bauthorized_keys\b|\bknown_hosts\b|\bSSH_AUTH_SOCK\b
   confidence: 0.65
   summary: 'SSH key / agent material: {match}'
-  notes: Extracted from rules.py scan_strings (_CRED_SSH_RE).
+  notes: >-
+    Extracted from rules.py scan_strings (_CRED_SSH_RE). Engine post-filter: a
+    match inside a Set([...]) / array-literal exclusion list (e.g.
+    `new Set(["id_rsa", ".npmrc"])` — a blocklist that EXCLUDES sensitive files
+    from indexing) is a protection pattern, not a credential read, and is dropped.
+    See unmask scanner/observe/content.py _is_in_blocklist.
 - id: sig.content.cred-keychain
   atom: CRED.KEYCHAIN
   surface: content
@@ -383,7 +388,10 @@ signatures:
   regex: \.npmrc\b|\.pypirc\b|/\.config/gh/|\.git-credentials\b|/\.docker/config\.json|(?<![\w.])\.netrc\b
   confidence: 0.65
   summary: 'application token / session-credential store: {match}'
-  notes: Extracted from rules.py scan_strings (_CRED_TOKEN_RE).
+  notes: >-
+    Extracted from rules.py scan_strings (_CRED_TOKEN_RE). Engine post-filter: a
+    match inside a Set([...]) / array-literal exclusion list is dropped (same
+    blocklist suppression as sig.content.cred-ssh).
 - id: sig.content.fsys-clipboard
   atom: FSYS.CLIPBOARD
   surface: content

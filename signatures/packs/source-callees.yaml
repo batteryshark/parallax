@@ -166,7 +166,14 @@ signatures:
   confidence: 0.85
   summary: shell command execution
   priority: 60
-  notes: child_process shell entry points; pairs with gate.exec.shell.javascript.child-process to drop RegExp.exec and local-helper false positives when no child_process evidence is present.
+  notes: >-
+    child_process shell entry points; pairs with gate.exec.shell.javascript.child-process
+    to drop RegExp.exec and local-helper false positives when no child_process evidence
+    is present. Engine enforcement: unmask scanner/observe/callee.py _js_exec_gate
+    drops the ambiguous bare callee ``exec`` / ``execSync`` (exact_or_suffix match)
+    when the file has no ``child_process`` text — the single biggest FP source in
+    minified JS bundles where ``RegExp.prototype.exec()`` appears hundreds of times.
+    Explicitly-qualified callees (``child_process.exec``, ``cp.exec``) are never gated.
 - id: sig.exec.proc.universal.base.createprocess
   atom: EXEC.PROC
   surface: callee

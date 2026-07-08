@@ -133,6 +133,37 @@ See [`examples/core-surfaces.yaml`](examples/core-surfaces.yaml) for:
 - a gated callee signature
 - a content regex signature
 
+## Engine Post-Filters
+
+Three engine-level post-filters suppress common false-positive shapes that the
+signature packs alone cannot distinguish. These are not signature changes (the
+atoms are correct — the evidence is just ambiguous), so they are documented here
+as engine contract:
+
+1. **JS `.exec` gate (EXEC.SHELL).** The bare callee `exec` / `execSync` in
+   JavaScript/TypeScript is ambiguous between `child_process.exec` (shell
+   execution) and `RegExp.prototype.exec` (regex matching — the most common
+   method call in any JS codebase). The pack-level context gate
+   (`gate.exec.shell.javascript.child-process`, `requires_context: any_text:
+   ["child_process"], on_missing: drop`) instructs the engine to drop the
+   ambiguous callee when the file has no `child_process` import. The unmask
+   engine enforces this in `scanner/observe/callee.py`. Explicitly-qualified
+   callees (`child_process.exec`, `cp.exec`) are never gated.
+
+2. **CRED blocklist suppression (CRED.\*).** Credential filenames (`id_rsa`,
+   `.npmrc`) that appear inside a `new Set(["id_rsa", ...])` exclusion-set
+   literal are a **protection pattern** (the app excludes sensitive files from
+   indexing), not a credential read. Matching them as CRED is a semantic
+   inversion. The unmask engine suppresses CRED matches inside `Set([...])` /
+   assignment-array contexts in `scanner/observe/content.py`.
+
+3. **Language-grammar file skip.** TextMate/VS Code language grammar definition
+   files (`bat-*.js`, `shell-syntax.js`) contain command names (`ipconfig`,
+   `nslookup`, `runas`, `net localgroup`) as syntax-highlighting data, not
+   executable code. These files are detected by filename pattern + content
+   density of grammar keys (`match:`, `begin:`, `end:`, `captures:`,
+   `patterns:`) and skipped entirely by the content observer.
+
 ## Packs
 
 See [`packs/source-callees.yaml`](packs/source-callees.yaml) for the first
