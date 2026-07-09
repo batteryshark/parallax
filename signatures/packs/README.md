@@ -2,7 +2,7 @@
 
 This directory contains reviewable signature-pack data for scanner engines.
 
-## `source-callees.yaml`
+## `source-callees.toml`
 
 The first pack extracts the durable callee classification tables from the
 Parallax reference engine:
@@ -16,8 +16,9 @@ tree-sitter grammar names, regex fallback behavior, or location handling. Those
 remain engine responsibilities.
 
 `source-callees.json` is the same pack serialized as JSON for dependency-light
-runtime loaders. Edit/review the YAML form first, then regenerate the JSON
-mirror:
+runtime loaders. Edit/review the `.toml` form first, then regenerate the JSON
+mirror (run with no arguments to rebuild every pack, or pass specific `.toml`
+paths):
 
 ```sh
 scripts/build-signature-json

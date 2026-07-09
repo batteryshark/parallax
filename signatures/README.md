@@ -5,8 +5,12 @@ code surfaces to ontology atoms. They let scanner implementations share durable
 detection knowledge without moving parser mechanics, tree-sitter traversal,
 dataflow, or performance glue into this repository.
 
-The format is described by [`schema.json`](schema.json). Packs may be stored as
-YAML or JSON; YAML is preferred for review because the content is mostly tables.
+The format is described by [`schema.json`](schema.json). TOML is the authoring
+source of record — the content is mostly tables, and TOML keeps it reviewable
+with comments and literal-string regexes. The sibling `.json` mirror is a
+generated artifact for dependency-light runtime loaders; edit the `.toml` and
+regenerate with [`scripts/build-signature-json`](../scripts/build-signature-json),
+which also lints callee match values before emitting JSON.
 
 ## Ownership Boundary
 
@@ -36,23 +40,22 @@ say how to walk a grammar or how to optimize a scanner.
 
 ## Pack Shape
 
-```yaml
-schema_version: parallax-signature-pack/v1
-id: parallax.core-surfaces
-name: Core source and content surfaces
-version: 0.1.0
-status: draft
-signatures:
-  - id: sig.exec.shell.universal.system
-    atom: EXEC.SHELL
-    surface: callee
-    method: static-source
-    languages: ["c", "cpp", "php", "ruby", "shell", "r"]
-    match:
-      mode: base
-      values: ["system", "popen", "shell_exec", "passthru"]
-    confidence: 0.78
-    summary: shell command execution
+```toml
+schema_version = 'parallax-signature-pack/v1'
+id = 'parallax.core-surfaces'
+name = 'Core source and content surfaces'
+version = '0.1.0'
+status = 'draft'
+
+[[signatures]]
+id = 'sig.exec.shell.universal.system'
+atom = 'EXEC.SHELL'
+surface = 'callee'
+method = 'static-source'
+languages = ['c', 'cpp', 'php', 'ruby', 'shell', 'r']
+match = { mode = 'base', values = ['system', 'popen', 'shell_exec', 'passthru'] }
+confidence = 0.78
+summary = 'shell command execution'
 ```
 
 ## Surfaces
@@ -94,11 +97,8 @@ or `powershell`.
 Some signatures are intentionally broad but ambiguous without nearby evidence.
 Use `requires_context` for those cases.
 
-```yaml
-requires_context:
-  scope: file
-  any_text: ["child_process"]
-  on_missing: drop
+```toml
+requires_context = { scope = 'file', any_text = ['child_process'], on_missing = 'drop' }
 ```
 
 `on_missing` is an instruction to the engine when the gate is not satisfied:
@@ -127,7 +127,7 @@ atom mapping itself.
 
 ## Worked Examples
 
-See [`examples/core-surfaces.yaml`](examples/core-surfaces.yaml) for:
+See [`examples/core-surfaces.toml`](examples/core-surfaces.toml) for:
 
 - a plain callee signature
 - a gated callee signature
@@ -166,5 +166,5 @@ as engine contract:
 
 ## Packs
 
-See [`packs/source-callees.yaml`](packs/source-callees.yaml) for the first
+See [`packs/source-callees.toml`](packs/source-callees.toml) for the first
 extracted callee pack from the Parallax reference engine.

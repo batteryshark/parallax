@@ -1,0 +1,142 @@
+schema_version = "parallax-atom-registry/v1"
+id = "parallax.skill-tactic-atoms"
+name = "RE skill tactic atoms (OBF / EVADE / STEGO)"
+version = "0.1.0"
+status = "draft"
+description = "Atoms emitted by the RE covert-scan skills (js-covert-scan, py-covert-scan), not by the signature packs. These name obfuscation / environment-keyed evasion / steganography tactics -- families the judgment-free MCD ontology deliberately omits (it uses XFRM for transformation, ENVI for environment interaction; obfuscation / evasion would be lens judgments). They live here, in a dedicated registry, so a scanner core can validate a skill-emitted atom by EXACT ATOM rather than a family whitelist. Each entry carries the family, a default confidence baseline, a mechanical one-line description, and which skill(s) emit it. As with all such signals, any single atom can be legitimate; the strong signal is co-occurrence."
+
+# TOML is the authoring source of record; ontology/atom-registry.json is the
+# generated mirror (scripts/build-signature-json). Edit here, then rebuild.
+
+[[atoms]]
+atom = "STEGO.INVISIBLE"
+family = "STEGO"
+confidence = 0.9
+description = "Invisible, zero-width, or format control character present in source text."
+emitted_by = ["js-covert-scan", "py-covert-scan"]
+
+[[atoms]]
+atom = "STEGO.BIDI"
+family = "STEGO"
+confidence = 0.9
+description = "Bidirectional control character that can reorder rendered source (Trojan Source)."
+emitted_by = ["js-covert-scan", "py-covert-scan"]
+
+[[atoms]]
+atom = "STEGO.HOMOGLYPH"
+family = "STEGO"
+confidence = 0.6
+description = "Confusable / homoglyph character standing in where ASCII is expected."
+emitted_by = ["js-covert-scan", "py-covert-scan"]
+
+[[atoms]]
+atom = "OBF.XOR"
+family = "OBF"
+confidence = 0.7
+description = "XOR over character codes, hiding string literals from a `strings` dump."
+emitted_by = ["js-covert-scan"]
+
+[[atoms]]
+atom = "OBF.CHARCODE"
+family = "OBF"
+confidence = 0.5
+description = 'String assembled from character codes (fromCharCode / chr()) or hex/\x escapes.'
+emitted_by = ["js-covert-scan", "py-covert-scan"]
+
+[[atoms]]
+atom = "OBF.ESCAPE"
+family = "OBF"
+confidence = 0.5
+description = "Long hex- or unicode-escaped string blob."
+emitted_by = ["js-covert-scan"]
+
+[[atoms]]
+atom = "OBF.DYNEVAL"
+family = "OBF"
+confidence = 0.6
+description = "Dynamic code execution via eval / new Function."
+emitted_by = ["js-covert-scan"]
+
+[[atoms]]
+atom = "OBF.DECODE_EXEC"
+family = "OBF"
+confidence = 0.78
+description = "Decode-then-execute: exec/eval/compile of base64/hex/zlib/marshal output."
+emitted_by = ["py-covert-scan"]
+
+[[atoms]]
+atom = "OBF.EXEC"
+family = "OBF"
+confidence = 0.45
+description = "Dynamic code execution via exec / eval."
+emitted_by = ["py-covert-scan"]
+
+[[atoms]]
+atom = "OBF.MARSHAL"
+family = "OBF"
+confidence = 0.6
+description = "marshal.loads of a marshalled code object."
+emitted_by = ["py-covert-scan"]
+
+[[atoms]]
+atom = "OBF.PICKLE"
+family = "OBF"
+confidence = 0.5
+description = "pickle load; deserialization that can execute code."
+emitted_by = ["py-covert-scan"]
+
+[[atoms]]
+atom = "OBF.DYNIMPORT"
+family = "OBF"
+confidence = 0.45
+description = "Dynamic import / getattr on __builtins__."
+emitted_by = ["py-covert-scan"]
+
+[[atoms]]
+atom = "EVADE.TIMEZONE"
+family = "EVADE"
+confidence = 0.65
+description = "Timezone-conditional behavior."
+emitted_by = ["js-covert-scan", "py-covert-scan"]
+
+[[atoms]]
+atom = "EVADE.LOCALE"
+family = "EVADE"
+confidence = 0.6
+description = "Locale / language-conditional behavior."
+emitted_by = ["js-covert-scan"]
+
+[[atoms]]
+atom = "EVADE.GEO"
+family = "EVADE"
+confidence = 0.6
+description = "Geolocation / region check."
+emitted_by = ["js-covert-scan"]
+
+[[atoms]]
+atom = "EVADE.PROXY"
+family = "EVADE"
+confidence = 0.6
+description = "Proxy / environment-conditional behavior."
+emitted_by = ["js-covert-scan"]
+
+[[atoms]]
+atom = "EVADE.PLATFORM"
+family = "EVADE"
+confidence = 0.5
+description = "Platform / OS-conditional behavior."
+emitted_by = ["py-covert-scan"]
+
+[[atoms]]
+atom = "EVADE.SANDBOX"
+family = "EVADE"
+confidence = 0.6
+description = "VM / sandbox / analyst detection (hostname, username, VM markers)."
+emitted_by = ["py-covert-scan"]
+
+[[atoms]]
+atom = "EVADE.ANTIDEBUG"
+family = "EVADE"
+confidence = 0.55
+description = "Debugger / tracer detection."
+emitted_by = ["py-covert-scan"]

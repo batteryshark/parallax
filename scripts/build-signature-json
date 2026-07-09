@@ -1,67 +1,162 @@
-#!/usr/bin/env ruby
-# frozen_string_literal: true
+#!/usr/bin/env python3
+"""Compile TOML taxonomy data into its JSON runtime mirror.
 
-require "json"
-require "pathname"
-require "yaml"
+TOML is the authoring source of record. The pure-SDK loaders and downstream
+scanners read the JSON mirror only, so the JSON is a generated artifact -- edit
+the ``.toml`` and regenerate. This build stays dependency-free: it reads with the
+stdlib ``tomllib`` (Python 3.11+) and writes with the stdlib ``json``.
 
-root = Pathname.new(__dir__).parent
-inputs = ARGV.empty? ? [root.join("signatures/packs/source-callees.yaml").to_s] : ARGV
+Two source kinds are compiled, dispatched on ``schema_version``:
 
-inputs.each do |input|
-  yaml_path = Pathname.new(input)
-  yaml_path = root.join(yaml_path) unless yaml_path.absolute?
-  unless yaml_path.file?
-    warn "signature pack not found: #{yaml_path}"
-    exit 1
-  end
+- ``parallax-signature-pack/v1`` -- signature packs (callee/content/binary-import
+  surface -> atom mappings), with dead-value linting.
+- ``parallax-atom-registry/v1`` -- the atom registry (skill-emitted OBF/EVADE/
+  STEGO tactic atoms), emitted with a deterministically sorted ``atoms`` array so
+  rebuilds are byte-stable.
 
-  data = YAML.safe_load(yaml_path.read, permitted_classes: [], aliases: false)
-  unless data.is_a?(Hash) && data["schema_version"] == "parallax-signature-pack/v1"
-    warn "not a parallax signature pack: #{yaml_path}"
-    exit 1
-  end
+Usage:
+  scripts/build-signature-json                       # rebuild every source
+  scripts/build-signature-json path/to/source.toml ... # rebuild specific sources
+"""
 
-  # base mode compares only the last "."-segment of a normalized callee, and
-  # normalization folds "::"/"->" to ".". A base value containing any member
-  # separator therefore loses its leading segments and can never match — a dead
-  # rule. Reject them at build time (e.g. R "download.file" -> segment "file").
-  dead_base = []
-  Array(data["signatures"]).each do |sig|
-    match = sig["match"]
-    next unless match.is_a?(Hash) && match["mode"] == "base"
-    Array(match["values"]).each do |value|
-      dead_base << [sig["id"], value] if value.is_a?(String) && value.match?(/[.:>]/)
-    end
-  end
-  unless dead_base.empty?
-    warn "base-mode values must not contain a member separator (. :: ->) in #{yaml_path}:"
-    dead_base.each { |id, value| warn "  #{id}: #{value.inspect} (base compares only the last '.'-segment)" }
-    exit 1
-  end
+from __future__ import annotations
 
-  # substring/suffix/exact* modes keep interior "."s (e.g. "net.http" is fine),
-  # but a value carrying "::" or "->" still can never match: normalization folds
-  # those to "." on the callee before comparison, so the raw separator is absent
-  # from every candidate. This is the class of bug that silenced Rust
-  # std::fs::write / std::fs::read detection (values should read std.fs.write).
-  dead_sep = []
-  Array(data["signatures"]).each do |sig|
-    match = sig["match"]
-    next unless match.is_a?(Hash)
-    next unless %w[substring suffix exact exact_or_suffix].include?(match["mode"])
-    Array(match["values"]).each do |value|
-      next unless value.is_a?(String) && (value.include?("::") || value.include?("->"))
-      dead_sep << [sig["id"], value, value.gsub("::", ".").gsub("->", ".")]
-    end
-  end
-  unless dead_sep.empty?
-    warn "match values must not contain a folded separator (:: or ->) in #{yaml_path}:"
-    dead_sep.each { |id, value, fixed| warn "  #{id}: #{value.inspect} -> use #{fixed.inspect}" }
-    exit 1
-  end
+import json
+import sys
+import tomllib
+from pathlib import Path
 
-  json_path = yaml_path.sub_ext(".json")
-  json_path.write(JSON.pretty_generate(data) + "\n")
-  puts "wrote #{json_path.relative_path_from(root)}"
-end
+ROOT = Path(__file__).resolve().parent.parent
+SIGNATURE_PACK_SCHEMA = "parallax-signature-pack/v1"
+ATOM_REGISTRY_SCHEMA = "parallax-atom-registry/v1"
+DEFAULT_SOURCES = [
+    "signatures/packs/source-callees.toml",
+    "signatures/packs/content-surfaces.toml",
+    "signatures/packs/binary-imports.toml",
+    "ontology/atom-registry.toml",
+]
+
+
+def _write_json(json_path: Path, data: dict) -> int:
+    json_path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    try:
+        rel = json_path.relative_to(ROOT)
+    except ValueError:
+        rel = json_path
+    print(f"wrote {rel}")
+    return 0
+
+
+def _build_signature_pack(data: dict, toml_path: Path) -> int:
+    signatures = data.get("signatures") or []
+
+    # base mode compares only the last "."-segment of a normalized callee, and
+    # normalization folds "::"/"->" to ".". A base value containing any member
+    # separator therefore loses its leading segments and can never match -- a dead
+    # rule. Reject them at build time (e.g. a "download.file" -> segment "file").
+    dead_base = []
+    for sig in signatures:
+        match = sig.get("match")
+        if not (isinstance(match, dict) and match.get("mode") == "base"):
+            continue
+        for value in match.get("values") or []:
+            if isinstance(value, str) and any(c in value for c in ".:>"):
+                dead_base.append((sig.get("id"), value))
+    if dead_base:
+        print(
+            f"base-mode values must not contain a member separator (. :: ->) in {toml_path}:",
+            file=sys.stderr,
+        )
+        for id_, value in dead_base:
+            print(f"  {id_}: {value!r} (base compares only the last '.'-segment)", file=sys.stderr)
+        return 1
+
+    # substring/suffix/exact* modes keep interior "."s (e.g. "net.http" is fine),
+    # but a value carrying "::" or "->" still can never match: normalization folds
+    # those to "." on the callee before comparison, so the raw separator is absent
+    # from every candidate. This is the class of bug that silenced Rust
+    # std::fs::write / std::fs::read detection (values should read std.fs.write).
+    dead_sep = []
+    for sig in signatures:
+        match = sig.get("match")
+        if not isinstance(match, dict):
+            continue
+        if match.get("mode") not in ("substring", "suffix", "exact", "exact_or_suffix"):
+            continue
+        for value in match.get("values") or []:
+            if isinstance(value, str) and ("::" in value or "->" in value):
+                dead_sep.append((sig.get("id"), value, value.replace("::", ".").replace("->", ".")))
+    if dead_sep:
+        print(
+            f"match values must not contain a folded separator (:: or ->) in {toml_path}:",
+            file=sys.stderr,
+        )
+        for id_, value, fixed in dead_sep:
+            print(f"  {id_}: {value!r} -> use {fixed!r}", file=sys.stderr)
+        return 1
+
+    return _write_json(toml_path.with_suffix(".json"), data)
+
+
+def _build_atom_registry(data: dict, toml_path: Path) -> int:
+    atoms = data.get("atoms")
+    if not isinstance(atoms, list):
+        print(f"atom registry {toml_path}: 'atoms' must be an array", file=sys.stderr)
+        return 1
+
+    bad = []
+    for i, row in enumerate(atoms):
+        if not isinstance(row, dict):
+            bad.append((i, "not a table"))
+            continue
+        atom = row.get("atom")
+        family = row.get("family")
+        if not isinstance(atom, str) or "." not in atom:
+            bad.append((i, f"atom {atom!r} must be a 'FAMILY.NAME' string"))
+        elif not isinstance(family, str) or atom.split(".", 1)[0] != family:
+            bad.append((i, f"family {family!r} must be the prefix of atom {atom!r}"))
+    if bad:
+        print(f"invalid atom registry {toml_path}:", file=sys.stderr)
+        for i, why in bad:
+            print(f"  atoms[{i}]: {why}", file=sys.stderr)
+        return 1
+
+    # Sort by atom id so the JSON mirror is byte-stable regardless of TOML order.
+    data = dict(data)
+    data["atoms"] = sorted(atoms, key=lambda r: r["atom"])
+    return _write_json(toml_path.with_suffix(".json"), data)
+
+
+def build(toml_path: Path) -> int:
+    if not toml_path.is_file():
+        print(f"source not found: {toml_path}", file=sys.stderr)
+        return 1
+
+    with toml_path.open("rb") as fh:
+        data = tomllib.load(fh)
+    if not isinstance(data, dict):
+        print(f"not a parallax taxonomy source: {toml_path}", file=sys.stderr)
+        return 1
+
+    schema = data.get("schema_version")
+    if schema == SIGNATURE_PACK_SCHEMA:
+        return _build_signature_pack(data, toml_path)
+    if schema == ATOM_REGISTRY_SCHEMA:
+        return _build_atom_registry(data, toml_path)
+    print(f"unknown schema_version {schema!r} in {toml_path}", file=sys.stderr)
+    return 1
+
+
+def main(argv: list[str]) -> int:
+    inputs = argv or DEFAULT_SOURCES
+    rc = 0
+    for inp in inputs:
+        path = Path(inp)
+        if not path.is_absolute():
+            path = ROOT / path
+        rc |= build(path)
+    return rc
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

@@ -47,6 +47,14 @@ Each category groups related atoms. The names are mechanical and judgment-free b
 
 125 atoms across the 16 MCD-derived categories, plus 4 experimental atoms (MEM = 3, TYPE = 1) = 129 atoms total. No pending categories.
 
+## Skill-Emitted Tactic Atoms
+
+The categories above are the judgment-free MCD ontology. A second, smaller vocabulary is emitted directly by RE covert-scan skills rather than by the signature packs, and names three tactic families this ontology deliberately omits — `OBF` (obfuscation), `EVADE` (environment-keyed evasion), and `STEGO` (steganography). Those names are lens judgments (the neutral ontology uses `XFRM` for transformation and `ENVI` for environment interaction), so they do not live under `ontology/atoms/**`. Instead they are declared in a flat registry carrying each atom's family, a default confidence baseline, a mechanical description, and which skill(s) emit it.
+
+As with the signature packs, [`atom-registry.toml`](atom-registry.toml) is the authoring source of record and `atom-registry.json` is its generated mirror — edit the TOML, then regenerate with `scripts/build-signature-json` (never hand-edit the JSON).
+
+The registry is the definition home that lets a scanner core validate a skill-emitted atom by **exact atom** (e.g. `OBF.XOR`, `EVADE.TIMEZONE`, `STEGO.HOMOGLYPH`), not merely by family prefix. See `rekit`'s `js-covert-scan` / `py-covert-scan` skills for the emitters.
+
 ## Idioms
 
 Recognized compositions of atoms with a structural "what" but no interpretive "why." Mechanisms any practitioner would recognize regardless of which lens they're using.
