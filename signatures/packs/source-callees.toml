@@ -66,11 +66,23 @@ atom = 'EXEC.SHELL'
 surface = 'callee'
 method = 'static-source'
 languages = ['javascript', 'typescript', 'tsx']
-match = { mode = 'exact_or_suffix', values = ['exec', 'execSync', 'child_process.exec', 'child_process.execSync', 'cp.exec', 'cp.execSync'], normalize = ['member_separators'] }
+match = { mode = 'exact_or_suffix', values = ['child_process.exec', 'child_process.execSync', 'cp.exec', 'cp.execSync'], normalize = ['member_separators'] }
 confidence = 0.85
 summary = 'shell command execution'
 priority = 60
-notes = 'child_process shell entry points; pairs with gate.exec.shell.javascript.child-process to drop RegExp.exec and local-helper false positives when no child_process evidence is present.'
+notes = 'Qualified child_process shell entry points (unambiguous).'
+
+[[signatures]]
+id = 'sig.exec.shell.javascript.bare-exec'
+atom = 'EXEC.SHELL'
+surface = 'callee'
+method = 'static-source'
+languages = ['javascript', 'typescript', 'tsx']
+match = { mode = 'exact_or_suffix', values = ['exec', 'execSync'], normalize = ['member_separators'] }
+confidence = 0.55
+summary = 'shell command execution (bare exec)'
+priority = 55
+notes = 'Bare exec()/execSync() callee: catches destructured child_process.exec, but also RegExp.prototype.exec and any library .exec() method, so lower confidence than the qualified forms. Still gated on file-level child_process evidence (gate.exec.shell.javascript.child-process); that gate is trivially satisfied in a minified bundle, so the reduced confidence keeps regex-.exec false positives from driving high-severity findings on their own.'
 
 [[signatures]]
 id = 'sig.exec.proc.universal.base.createprocess'
