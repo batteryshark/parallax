@@ -32,11 +32,12 @@ The observation is shared; the judgment changes with the lens. A package install
 
 ## What is here
 
-- [`ontology/`](ontology/): the judgment-free behavior vocabulary: 129 atoms across 18 categories (16 core plus the experimental MEM and TYPE), and the idioms that compose them. An atom records a mechanical fact (`EXEC.SHELL`, `NETW.HTTP`, `CRED.CLOUD`), never a verdict.
+- [`ontology/`](ontology/): the judgment-free behavior vocabulary: 131 atoms across 18 categories (16 core plus the experimental MEM and TYPE), and the idioms that compose them. An atom records a mechanical fact (`EXEC.SHELL`, `NETW.HTTP`, `CRED.CLOUD`), never a verdict.
 - [`signatures/`](signatures/): machine-readable signature-pack contracts for stable mappings from observed code surfaces to ontology atoms. These are data, not parser mechanics; scanner implementations own extraction. The TOML packs are the source of record, and [`scripts/build-signature-json`](scripts/build-signature-json) regenerates their JSON mirrors.
 - [`enrichment/`](enrichment/): lens-neutral external facts that modify confidence, such as domain age, package provenance, and build drift. Like atoms, these are facts, not judgments; each lens decides whether a datum amplifies, attenuates, or is neutral to its reading.
 - [`lenses/`](lenses/): the interpretation layer. Each lens reads the shared atoms through one question: MCD (is this malicious?), decisions (where does it decide trust, dispatch, authority?), capability (blast radius if abused), curiosity (what is surprising for its stated purpose?), and architecture (brittleness and operational risk). Each lens keeps severity separate from confidence and states what would disprove a finding.
 - [`investigation/`](investigation/): the confidence algebra and the methods of observation, including their declared blind spots.
+- [Cryptographic material and protection boundaries](investigation/cryptographic-material.md): key generation/import provenance, validation enforcement, predictable secrets, monitoring gaps, and unexpected plaintext. Includes semantic acceptance cases and a sourced incident research note; scanner engines implement dataflow and measurements.
 - [`ARCHITECTURE.md`](ARCHITECTURE.md): the framework and its design philosophy.
 
 ## Design principles

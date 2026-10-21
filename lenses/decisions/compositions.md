@@ -52,6 +52,31 @@ Named decision patterns built from multiple observations. Each is a *decision*, 
 
 ---
 
+## DC-KEY-ADMISSION: Material becomes cryptographic authority
+
+**Shape:** `CRPT.KEYGEN` / `CRPT.KEYLOAD` → validation/activation decision →
+`CRPT.SIGN`, `CRPT.SYMENC`, `CRPT.ASYMENC`, or `CRPT.KEYEX`.
+
+**Decision:** "I permit this key version to protect data or exercise signing/authentication authority." Record provenance, the specific criteria checked by `CRPT.KEYCHECK`, whether failures/unsupported results block use, and who can override policy. A check after first use is a different boundary. Missing matches imply unknown coverage until the bounded path and provider controls are assessed.
+
+**Consequence:** High–Critical where predictable material gains production authority; confidence in the path and material is independent of malicious intent.
+
+**Disproof:** The claimed key never reaches the consumer, material was misidentified, or the relevant policy is demonstrably enforced before use on the claimed path. A successful import or consistency check does not disprove predictable generation.
+
+**Verification:** Follow key handle/version across generation, import/unwrap, restore, validation, activation and use. Exercise synthetic failure/override cases and verify rejection and alert delivery separately. See [cryptographic investigation](../../investigation/cryptographic-material.md).
+
+## DC-PROTECTION-FALLBACK: Failure decides whether data stays protected
+
+**Shape:** Required encryption → error/disabled branch → `FSYS.WRITE` / `NETW.*` of the original plaintext.
+
+**Decision:** "I continue output after the protection step fails or is disabled."
+
+**Consequence:** High where confidential data reaches an unauthorized boundary; impact depends on actual data and recipients.
+
+**Disproof:** The required payload remains encrypted at that boundary, output is blocked, or the requirement does not apply. A high-entropy output score is not disproof.
+
+**Verification:** Trace actual values through fallback paths with synthetic plaintext, accounting for framing and encryption at other layers. Record the stated requirement and observed result; absent encryption symbols alone do not establish this composition.
+
 ### Notes on use
 
 - Compositions require **reachability**, not co-location. An engine without dataflow uses same-file/same-scope as a weak proxy and must lower confidence accordingly (and say so). Stronger reachability (dataflow) is an engine upgrade, not a lens change.

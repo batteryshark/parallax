@@ -24,4 +24,6 @@ Encrypts or decrypts data using symmetric-key algorithms where the same key (or 
 
 ## Notes
 
+Record whether the encryption operation actually runs and where its output goes, including failure/disabled branches that return the input. Distribution measurements on ciphertext require a known payload region, representation, sample size and baseline; neither high nor low byte entropy proves encryption status. See [protection-boundary investigation](../../../investigation/cryptographic-material.md).
+
 The algorithm, mode, key source, IV handling, and what data is being encrypted/decrypted are the key structural data points. The same AES-256-GCM call appears in password managers, file encryption utilities, TLS implementations, and ransomware, context determines meaning. Whether the operation is encryption or decryption is also relevant: encryption produces ciphertext from plaintext; decryption reverses it.

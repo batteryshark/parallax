@@ -29,6 +29,8 @@ The investigation cycle suggests method transitions when current evidence has ga
 | Suspicious network atoms | Static source/binary | Network analysis (observe actual traffic) |
 | Unknown maintainer | Any code analysis | OSINT (identity, history) |
 | Time-gated behavior | Static source | Environment scaffolding (manipulate clock) → dynamic |
+| Predictable key material or a check whose result is ignored | Static source | Deployment/provider records → isolated dynamic admission and alert tests; see [cryptographic investigation](../cryptographic-material.md) |
+| Unexpectedly low-entropy data at an encryption boundary | Artifact/network inspection | Format-aware payload inspection → controlled dataflow and failure-path tests |
 
 ## Provenance and Multi-Method Confirmation
 

@@ -2,7 +2,7 @@
   "schema_version": "parallax-signature-pack/v1",
   "id": "parallax.binary-imports",
   "name": "Binary import-symbol surfaces",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "draft",
   "signatures": [
     {
@@ -27,6 +27,67 @@
       "confidence": 0.55,
       "summary": "process-injection primitive",
       "notes": "Extracted from bincaps.py _CAP_MAP."
+    },
+    {
+      "id": "sig.binary-import.crpt-keyload",
+      "atom": "CRPT.KEYLOAD",
+      "surface": "binary-import",
+      "method": "static-binary",
+      "languages": [
+        "*"
+      ],
+      "match": {
+        "mode": "exact",
+        "values": [
+          "pem_read_bio_privatekey",
+          "pem_read_bio_privatekey_ex",
+          "pem_read_privatekey",
+          "pem_read_privatekey_ex",
+          "pem_read_bio_pubkey",
+          "pem_read_bio_pubkey_ex",
+          "d2i_privatekey",
+          "d2i_autoprivatekey"
+        ],
+        "normalize": [
+          "lowercase"
+        ]
+      },
+      "confidence": 0.55,
+      "summary": "OpenSSL key decoding import",
+      "notes": "Engine strips platform symbol decoration before matching. Import presence does not prove invocation, key quality, or production use.",
+      "references": [
+        "https://docs.openssl.org/3.5/man3/PEM_read_bio_PrivateKey/"
+      ]
+    },
+    {
+      "id": "sig.binary-import.crpt-keycheck",
+      "atom": "CRPT.KEYCHECK",
+      "surface": "binary-import",
+      "method": "static-binary",
+      "languages": [
+        "*"
+      ],
+      "match": {
+        "mode": "exact",
+        "values": [
+          "evp_pkey_check",
+          "evp_pkey_param_check",
+          "evp_pkey_param_check_quick",
+          "evp_pkey_public_check",
+          "evp_pkey_public_check_quick",
+          "evp_pkey_private_check",
+          "evp_pkey_pairwise_check"
+        ],
+        "normalize": [
+          "lowercase"
+        ]
+      },
+      "confidence": 0.55,
+      "summary": "OpenSSL key or parameter validation import",
+      "notes": "Engine strips platform symbol decoration before matching. Symbol presence does not prove enforcement; inspect result handling and provider behavior.",
+      "references": [
+        "https://docs.openssl.org/3.5/man3/EVP_PKEY_check/"
+      ]
     },
     {
       "id": "sig.binary-import.exec-shell",

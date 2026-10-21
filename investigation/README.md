@@ -31,6 +31,8 @@ The iterative process: observe → interpret → verify → discover more → re
 
 ## Investigation Runs
 
+For key provenance, predictable material, admission controls, alert coverage, and expected ciphertext, use the [cryptographic material investigation contract](cryptographic-material.md). The [supporting research](crypto-entropy-research.md) separates incident evidence from modeling recommendations.
+
 [`runs/`](runs/) defines the artifact layout for recorded investigations: bounded source, binary, decompilation, or lens-verification investigations that feed back into findings and confidence. Scanner runners write the same layout in their own repositories; runs checked in here are shared evidence or worked examples.
 
 ## Status

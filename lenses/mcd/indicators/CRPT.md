@@ -9,6 +9,8 @@
 | `CRPT.SYMENC` | Medium-High | In non-crypto libraries, severity increases with filesystem or network co-occurrence |
 | `CRPT.ASYMENC` | Medium-High | Paired with hardcoded public key = High |
 | `CRPT.KEYGEN` | Medium | Depends on key lifecycle, transmitted keys higher than local-only |
+| `CRPT.KEYLOAD` | Low alone | Ordinary import/loading; impact rises with confirmed predictable material reaching consequential use |
+| `CRPT.KEYCHECK` | Low alone | Validation is ordinary; ignored failures or bypasses need control-flow evidence |
 | `CRPT.RNG` | Low-Medium | CSPRNG access alone is common; notable when no declared crypto dependency explains it |
 | `CRPT.HASH` | Low-Medium | Widely used for integrity; escalates when combined with credential or network operations |
 | `CRPT.CREDHASH` | Medium-High | Outside authentication systems = suspicious |
@@ -19,6 +21,9 @@
 
 ## Escalation Factors
 
+- **Predictable or substituted secret material reaches production use.** Small EC scalars, all-zero/repeated keys, public test values, or public-seed derivation can create serious exposure even through audited libraries. Confirm role, value flow, and deployment. Impact is separate from intent; use [cryptographic signals](../signals/cryptographic-material.md) and [BP-CRYPTOWEAK](../compositions/BP-CRYPTOWEAK.md) for corroboration and disproof.
+- **Admission failures are ignored or alerting is selectively disabled.** Trace the same key version through check, activation and use; correlate control changes before forming an insider or supply-chain hypothesis. Missing scanner matches alone do not establish missing checks.
+- **Required encryption has an unprotected fallback.** Confirm original plaintext reaches the required boundary after an error/disable branch. A low-entropy file or missing encryption symbol is only a lead.
 - **`CRPT.CUSTOM` is present in any capacity.** Hand-rolled crypto is the strongest CRPT signal. Legitimate developers use audited libraries. Any custom implementation warrants immediate escalation.
 - **Asymmetric public key is hardcoded in source or binary.** A hardcoded attacker-controlled public key means the code encrypts data only a predetermined recipient can read. No legitimate application hardcodes a foreign public key.
 - **`CRPT.KEYEX` in code with no communication or protocol role.** Key exchange establishes a shared secret between two parties. Without a documented protocol or network role, this is covert channel setup.
@@ -32,7 +37,7 @@
 
 ## De-escalation Factors
 
-- **Well-known, audited library call with no customization.** Straightforward call to `cryptography`, `libsodium`, `OpenSSL`, or equivalent with no monkey-patching. *(Caveat: verify the import resolves to the genuine library; supply chain attacks impersonate crypto library names.)*
+- **Well-known, audited library call with no customization.** Straightforward call to `cryptography`, `libsodium`, `OpenSSL`, or equivalent with no monkey-patching. *(Caveat: verify the import resolves to the genuine library. Also trace supplied keys and error handling: genuine libraries can accept predictable but mathematically valid material; this does not attenuate a confirmed weak-key finding.)*
 - **Crypto operation is the declared, documented purpose of the package.** An encryption utility or TLS wrapper will legitimately contain high CRPT concentrations. *(Caveat: when crypto scope exceeds stated purpose, as with LiteLLM's full SigV4 + RSA pipeline, treat the excess as unexplained.)*
 - **`CRPT.HASH` used exclusively for integrity checking or content addressing.** Hashing for cache keys, download verification, or content-addressable identifiers is low-risk. *(Caveat: confirm hash output isn't subsequently used as key material, HMAC secret, or transmitted outbound.)*
 - **`CRPT.CREDHASH` in a clearly scoped authentication module.** bcrypt/argon2 in password storage context is expected. *(Caveat: does not apply outside auth scope.)*
@@ -53,6 +58,8 @@
 | `CRPT.CUSTOM` + `CRPT.SIGN` | Hand-rolled signing scheme, self-contained authentication without library dependency | High |
 | `CRPT.KEYGEN` + `ENVI.ENVCHECK` / system fingerprinting | Key derived from victim identifiers, per-victim deterministic encryption | High |
 | `CRPT.CERT` + `CRPT.CUSTOM` + `NETW.HTTP` | Full MITM stack, custom crypto + cert manipulation + outbound HTTP | Critical |
+| `CRPT.KEYLOAD` / `CRPT.KEYGEN` → signing/encryption with confirmed predictable secret | Production forgery/disclosure risk; deliberate weakening requires independent corroboration | High–Critical by trust/data scope |
+| `CRPT.KEYCHECK` failure → same key activated/used | Ineffective admission control; investigate error handling, overrides and provenance | High when consequential use is confirmed |
 
 ## MCD-Specific Disambiguation
 

@@ -72,6 +72,7 @@ Reach: can consume CPU, memory, disk, GPU, or network capacity.
 
 ## Cross-cutting
 
+- **Key selection is authority even without export.** `CRPT.KEYLOAD`/`CRPT.KEYGEN` feeding signing, encryption, or key agreement can let a caller choose material that governs those consumers. Establish actual activation/replacement permissions; an import API alone does not prove authority over production. Map relying parties, key usage, rotation/revocation and access to override controls. Non-exportability does not bound this capability when a caller can substitute an already-known value. Separate material-selection, validation-override, signing-use and alert-administration permissions. See [key admission decisions](../decisions/compositions.md#dc-key-admission-material-becomes-cryptographic-authority).
 - **Reachability bounds blast radius.** A surface in dead/unreachable code has near-zero blast radius. An engine that cannot prove reachability should flag this as a disproof criterion instead.
 - **Surfaces compound.** The dangerous combinations are in [compositions.md](compositions.md); a lone surface is rarely the story.
 - **Reach ≠ confidence.** Report the power of the surface and the certainty it exists as two separate numbers, always.

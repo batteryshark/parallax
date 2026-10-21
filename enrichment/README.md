@@ -60,3 +60,4 @@ already use.
 | [Temporal](temporal.md) | `ENR.TIME.*` | activity dormancy, coordinated publication, pre-staged versions |
 | [Execution context](execution-context.md) | `ENR.EXEC.*` | lifecycle phase, privilege and orchestration, analysis-environment awareness |
 | [Network destination](network-destination.md) | `ENR.NET.*` | domain age, hosting type, jurisdiction, threat-intel reputation |
+| [Cryptographic material](cryptographic-material.md) | `ENR.CRYPTO.*` | material role and origin, measurements, admission/alert coverage, production use, control changes, expected versus observed protection |

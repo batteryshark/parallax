@@ -2,7 +2,7 @@
 
 ## Description
 
-Generates cryptographic key material: symmetric keys, asymmetric key pairs, or keys derived from passwords/passphrases via key derivation functions (PBKDF2, HKDF, scrypt, argon2 used for key derivation rather than password storage). Includes both direct random key generation and deterministic key derivation from input material. The output is key material suitable for use in cryptographic operations.
+Generates cryptographic key material: symmetric keys, asymmetric key pairs, or keys derived from passwords/passphrases via key derivation functions (PBKDF2, HKDF, scrypt, argon2 used for key derivation rather than password storage). Includes both direct random key generation and deterministic key derivation from input material. The output is intended as key material; this observation does not establish its quality.
 
 ## Detection Surface
 
@@ -14,6 +14,7 @@ Generates cryptographic key material: symmetric keys, asymmetric key pairs, or k
 
 ## Disambiguation
 
+- **vs CRPT.KEYLOAD / CRPT.KEYCHECK**: Constructing a key from an already-selected scalar or importing existing bytes is KEYLOAD, even if the function is named `derive_private_key` or `createSecretKey`. Evaluating material or provenance against criteria is KEYCHECK. Neither proves fresh random generation.
 - **vs CRPT.RNG**: Random number generation produces random bytes. Key generation uses random bytes (and potentially other inputs) to produce structured key material. CRPT.RNG may be a component of CRPT.KEYGEN, but KEYGEN also covers deterministic derivation (KDFs) where no fresh randomness is required.
 - **vs CRPT.CREDHASH**: Key derivation functions (PBKDF2, scrypt, argon2) appear in both atoms. When the output is used as key material for encryption/decryption, classify as CRPT.KEYGEN. When the output is stored or compared as a password hash for authentication, classify as CRPT.CREDHASH. The function is the same; the usage determines the atom.
 
@@ -25,3 +26,5 @@ Generates cryptographic key material: symmetric keys, asymmetric key pairs, or k
 ## Notes
 
 The key lifecycle (where keys are generated, how they're stored, how they're transmitted, and when they're destroyed) is the primary structural data for this atom. Keys generated, used locally, and discarded differ structurally from keys generated and transmitted externally. Key material derived from runtime-specific inputs (hostname, MAC address, process ID) produces deterministic per-environment keys, which is structurally different from keys derived from secure random sources.
+
+Trace RNG/KDF inputs, truncation, conversion, fallback constants and downstream use. A CSPRNG call elsewhere in the file does not establish the origin of this key. Deterministic derivation from a protected secret differs from derivation from public constants. See [cryptographic material investigation](../../../investigation/cryptographic-material.md).

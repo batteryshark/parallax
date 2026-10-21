@@ -2,9 +2,45 @@
   "schema_version": "parallax-signature-pack/v1",
   "id": "parallax.content-surfaces",
   "name": "Content and extracted-string surfaces",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "status": "draft",
   "signatures": [
+    {
+      "id": "sig.content.crpt-keyload",
+      "atom": "CRPT.KEYLOAD",
+      "surface": "content",
+      "method": "static-source",
+      "languages": [
+        "*"
+      ],
+      "regex": "\\b(?:serialization\\.load_(?:pem|der|ssh)_(?:private|public)_key|ec\\.derive_private_key|crypto\\.create(?:Private|Public|Secret)Key|(?:crypto|webcrypto)\\.subtle\\.(?:importKey|unwrapKey)|PEM_read(?:_bio)?_(?:PrivateKey|PUBKEY)(?:_ex)?|d2i_(?:PrivateKey|AutoPrivateKey))\\b",
+      "confidence": 0.6,
+      "summary": "key loading / construction surface: {match}",
+      "cap_per_file": 3,
+      "notes": "Surface only; comments, fixtures and unresolved bindings require verification. Does not establish material quality, fresh generation or operational use. Match excludes arguments to avoid capturing key bytes.",
+      "references": [
+        "https://cryptography.io/en/latest/hazmat/primitives/asymmetric/ec/",
+        "https://nodejs.org/api/crypto.html",
+        "https://docs.openssl.org/3.5/man3/PEM_read_bio_PrivateKey/"
+      ]
+    },
+    {
+      "id": "sig.content.crpt-keycheck",
+      "atom": "CRPT.KEYCHECK",
+      "surface": "content",
+      "method": "static-source",
+      "languages": [
+        "*"
+      ],
+      "regex": "\\bEVP_PKEY_(?:check|param_check(?:_quick)?|public_check(?:_quick)?|private_check|pairwise_check)\\b",
+      "confidence": 0.6,
+      "summary": "key / parameter validation surface: {match}",
+      "cap_per_file": 3,
+      "notes": "Validation API name only. No claim of entropy assurance, invocation, success or enforced rejection. Follow return values and provider behavior.",
+      "references": [
+        "https://docs.openssl.org/3.5/man3/EVP_PKEY_check/"
+      ]
+    },
     {
       "id": "sig.content.ftp-url",
       "atom": "NETW.FTP",

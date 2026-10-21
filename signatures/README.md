@@ -164,7 +164,30 @@ as engine contract:
    density of grammar keys (`match:`, `begin:`, `end:`, `captures:`,
    `patterns:`) and skipped entirely by the content observer.
 
-## Packs
+## Cryptographic Coverage Contract
+
+The packs distinguish generation (`CRPT.KEYGEN`), randomness access (`CRPT.RNG`),
+loading/import (`CRPT.KEYLOAD`), and validation (`CRPT.KEYCHECK`). Function names
+such as `ec.derive_private_key` and `crypto.createSecretKey` load selected material;
+they do not establish new randomness. KEYCHECK signatures identify an operation,
+not adequate entropy, enforcement, or alert delivery.
+
+Consumers own import/alias resolution, argument/value flow, decoding, structural
+weak-material predicates, production reachability, and control/output tests. The
+SDK classifier accepts normalized callee names and cannot prove these properties.
+Qualified API matches can still be shadowed; verify bindings. Unresolved wrappers
+or opaque providers are coverage gaps, not evidence of missing checks. Content
+matches can occur in comments/fixtures and binary imports need not execute.
+
+Do not require high entropy to recognize credential material: constants and small
+scalars at secret-bearing sinks matter too. Conversely, never emit a weak-key or
+plaintext finding from an unscoped byte-entropy regex. See the
+[investigation contract](../investigation/cryptographic-material.md) for semantic
+acceptance cases, failure-path checks and evidence redaction. The existing
+`Observation` serializer does not redact secrets; engines must sanitize evidence
+before constructing observations.
+
+## Pack Sources
 
 See [`packs/source-callees.toml`](packs/source-callees.toml) for the first
 extracted callee pack from the Parallax reference engine.

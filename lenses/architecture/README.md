@@ -6,6 +6,7 @@ The Architecture lens evaluates software behaviors for quality indicators, desig
 
 ## Components
 
+- [Cryptographic control gaps](indicators/cryptographic-controls.md): key admission, validation enforcement, monitoring, and plaintext fallback assessment with disproof criteria.
 - **Indicators**: what ontology atoms and idioms suggest about build quality, resilience, and design intent
 - **Compositions**: named patterns (fragile integration, time-coupled logic, unhandled failure modes, etc.)
 - **Confidence modifiers**: signals like test coverage, documentation presence, version maturity, error handling patterns

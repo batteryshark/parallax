@@ -2,7 +2,7 @@
   "schema_version": "parallax-signature-pack/v1",
   "id": "parallax.source-callees",
   "name": "Source callee signatures",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "status": "experimental",
   "description": "Durable callee-to-atom mappings extracted from the Parallax reference engine rules tables.",
   "owners": [
@@ -3016,6 +3016,313 @@
       "confidence": 0.78,
       "summary": "dynamic code evaluation (eval)",
       "notes": "JS/TS client callees (restores coverage dropped in extraction)."
+    },
+    {
+      "id": "sig.crpt.keyload.python.serialization",
+      "atom": "CRPT.KEYLOAD",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "python"
+      ],
+      "match": {
+        "mode": "exact_or_suffix",
+        "values": [
+          "serialization.load_pem_private_key",
+          "serialization.load_der_private_key",
+          "serialization.load_ssh_private_key",
+          "serialization.load_pem_public_key",
+          "serialization.load_der_public_key",
+          "serialization.load_ssh_public_key"
+        ],
+        "case_sensitive": true,
+        "normalize": [
+          "member_separators"
+        ]
+      },
+      "confidence": 0.85,
+      "summary": "cryptographic key deserialization",
+      "priority": 60,
+      "notes": "API surface only: verify binding, arguments, result handling and reachable use. No key-quality or production-enforcement claim.",
+      "references": [
+        "https://cryptography.io/en/latest/hazmat/primitives/asymmetric/serialization/"
+      ]
+    },
+    {
+      "id": "sig.crpt.keyload.python.ec-scalar",
+      "atom": "CRPT.KEYLOAD",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "python"
+      ],
+      "match": {
+        "mode": "exact_or_suffix",
+        "values": [
+          "ec.derive_private_key"
+        ],
+        "case_sensitive": true,
+        "normalize": [
+          "member_separators"
+        ]
+      },
+      "confidence": 0.85,
+      "summary": "EC key construction from a supplied private scalar",
+      "priority": 60,
+      "notes": "API surface only: verify binding, arguments, result handling and reachable use. No key-quality or production-enforcement claim.",
+      "references": [
+        "https://cryptography.io/en/latest/hazmat/primitives/asymmetric/ec/"
+      ]
+    },
+    {
+      "id": "sig.crpt.keygen.python.ec",
+      "atom": "CRPT.KEYGEN",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "python"
+      ],
+      "match": {
+        "mode": "exact_or_suffix",
+        "values": [
+          "ec.generate_private_key"
+        ],
+        "case_sensitive": true,
+        "normalize": [
+          "member_separators"
+        ]
+      },
+      "confidence": 0.85,
+      "summary": "EC private key generation",
+      "priority": 60,
+      "notes": "API surface only: verify binding, arguments, result handling and reachable use. No key-quality or production-enforcement claim.",
+      "references": [
+        "https://cryptography.io/en/latest/hazmat/primitives/asymmetric/ec/"
+      ]
+    },
+    {
+      "id": "sig.crpt.rng.python",
+      "atom": "CRPT.RNG",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "python"
+      ],
+      "match": {
+        "mode": "exact_or_suffix",
+        "values": [
+          "secrets.token_bytes",
+          "secrets.token_hex",
+          "secrets.token_urlsafe",
+          "secrets.randbits",
+          "secrets.randbelow",
+          "os.urandom"
+        ],
+        "case_sensitive": true,
+        "normalize": [
+          "member_separators"
+        ]
+      },
+      "confidence": 0.85,
+      "summary": "cryptographic randomness request",
+      "priority": 60,
+      "notes": "API surface only: verify binding, arguments, result handling and reachable use. No key-quality or production-enforcement claim.",
+      "references": [
+        "https://docs.python.org/3/library/secrets.html"
+      ]
+    },
+    {
+      "id": "sig.crpt.keyload.javascript.node",
+      "atom": "CRPT.KEYLOAD",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "javascript",
+        "typescript",
+        "tsx"
+      ],
+      "match": {
+        "mode": "exact_or_suffix",
+        "values": [
+          "crypto.createPrivateKey",
+          "crypto.createPublicKey",
+          "crypto.createSecretKey"
+        ],
+        "case_sensitive": true,
+        "normalize": [
+          "member_separators"
+        ]
+      },
+      "confidence": 0.85,
+      "summary": "cryptographic key object loaded from supplied material",
+      "priority": 60,
+      "notes": "API surface only: verify binding, arguments, result handling and reachable use. No key-quality or production-enforcement claim.",
+      "references": [
+        "https://nodejs.org/api/crypto.html"
+      ]
+    },
+    {
+      "id": "sig.crpt.keyload.javascript.webcrypto",
+      "atom": "CRPT.KEYLOAD",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "javascript",
+        "typescript",
+        "tsx"
+      ],
+      "match": {
+        "mode": "exact_or_suffix",
+        "values": [
+          "crypto.subtle.importKey",
+          "crypto.subtle.unwrapKey",
+          "webcrypto.subtle.importKey",
+          "webcrypto.subtle.unwrapKey"
+        ],
+        "case_sensitive": true,
+        "normalize": [
+          "member_separators"
+        ]
+      },
+      "confidence": 0.85,
+      "summary": "WebCrypto key import or unwrap",
+      "priority": 60,
+      "notes": "API surface only: verify binding, arguments, result handling and reachable use. No key-quality or production-enforcement claim.",
+      "references": [
+        "https://www.w3.org/TR/WebCryptoAPI/"
+      ]
+    },
+    {
+      "id": "sig.crpt.keygen.javascript",
+      "atom": "CRPT.KEYGEN",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "javascript",
+        "typescript",
+        "tsx"
+      ],
+      "match": {
+        "mode": "exact_or_suffix",
+        "values": [
+          "crypto.generateKey",
+          "crypto.generateKeySync",
+          "crypto.generateKeyPair",
+          "crypto.generateKeyPairSync",
+          "crypto.subtle.generateKey",
+          "webcrypto.subtle.generateKey"
+        ],
+        "case_sensitive": true,
+        "normalize": [
+          "member_separators"
+        ]
+      },
+      "confidence": 0.85,
+      "summary": "cryptographic key generation",
+      "priority": 60,
+      "notes": "API surface only: verify binding, arguments, result handling and reachable use. No key-quality or production-enforcement claim.",
+      "references": [
+        "https://nodejs.org/api/crypto.html"
+      ]
+    },
+    {
+      "id": "sig.crpt.rng.javascript",
+      "atom": "CRPT.RNG",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "javascript",
+        "typescript",
+        "tsx"
+      ],
+      "match": {
+        "mode": "exact_or_suffix",
+        "values": [
+          "crypto.randomBytes",
+          "crypto.randomFill",
+          "crypto.randomFillSync",
+          "crypto.getRandomValues",
+          "webcrypto.getRandomValues"
+        ],
+        "case_sensitive": true,
+        "normalize": [
+          "member_separators"
+        ]
+      },
+      "confidence": 0.85,
+      "summary": "cryptographic randomness request",
+      "priority": 60,
+      "notes": "API surface only: verify binding, arguments, result handling and reachable use. No key-quality or production-enforcement claim.",
+      "references": [
+        "https://nodejs.org/api/crypto.html"
+      ]
+    },
+    {
+      "id": "sig.crpt.keyload.c.openssl",
+      "atom": "CRPT.KEYLOAD",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "c",
+        "cpp"
+      ],
+      "match": {
+        "mode": "exact",
+        "values": [
+          "PEM_read_bio_PrivateKey",
+          "PEM_read_bio_PrivateKey_ex",
+          "PEM_read_PrivateKey",
+          "PEM_read_PrivateKey_ex",
+          "PEM_read_bio_PUBKEY",
+          "PEM_read_bio_PUBKEY_ex",
+          "d2i_PrivateKey",
+          "d2i_AutoPrivateKey"
+        ],
+        "case_sensitive": true,
+        "normalize": [
+          "member_separators"
+        ]
+      },
+      "confidence": 0.85,
+      "summary": "OpenSSL key decoding",
+      "priority": 60,
+      "notes": "API surface only: verify binding, arguments, result handling and reachable use. No key-quality or production-enforcement claim.",
+      "references": [
+        "https://docs.openssl.org/3.5/man3/PEM_read_bio_PrivateKey/"
+      ]
+    },
+    {
+      "id": "sig.crpt.keycheck.c.openssl",
+      "atom": "CRPT.KEYCHECK",
+      "surface": "callee",
+      "method": "static-source",
+      "languages": [
+        "c",
+        "cpp"
+      ],
+      "match": {
+        "mode": "exact",
+        "values": [
+          "EVP_PKEY_check",
+          "EVP_PKEY_param_check",
+          "EVP_PKEY_param_check_quick",
+          "EVP_PKEY_public_check",
+          "EVP_PKEY_public_check_quick",
+          "EVP_PKEY_private_check",
+          "EVP_PKEY_pairwise_check"
+        ],
+        "case_sensitive": true,
+        "normalize": [
+          "member_separators"
+        ]
+      },
+      "confidence": 0.85,
+      "summary": "OpenSSL key or parameter validation",
+      "priority": 60,
+      "notes": "API surface only: verify binding, arguments, result handling and reachable use. No key-quality or production-enforcement claim.",
+      "references": [
+        "https://docs.openssl.org/3.5/man3/EVP_PKEY_check/"
+      ]
     }
   ]
 }

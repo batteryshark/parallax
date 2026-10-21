@@ -14,3 +14,4 @@ A medium-confidence finding in a package with multiple adverse contextual signal
 | [Temporal Signals](temporal-signals.md) | Abandonment patterns, coordinated publication, pre-staged versions |
 | [Execution Context](execution-context.md) | CI/CD targeting, security tooling context, privileged orchestration |
 | [Network Destination](network-destination.md) | Jurisdictional risk, bulletproof hosting, recently registered domains |
+| [Cryptographic Material](cryptographic-material.md) | Predictable material in production, validation bypass, substitution, alert suppression, and protection failures with independent intent assessment |

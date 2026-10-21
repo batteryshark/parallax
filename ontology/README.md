@@ -26,7 +26,7 @@ Each category groups related atoms. The names are mechanical and judgment-free b
 | CRED | Credential Access | 7 | neutral |
 | LOAD | Dynamic Code Loading | 9 | includes MEMCHAIN (in-memory chain) and KERNEL_MODULE (kernel-space load) |
 | ENVI | Environment Interaction | 9 | "environment interaction" is mechanical; "evasion" would be a judgment |
-| CRPT | Cryptographic Operations | 10 | neutral |
+| CRPT | Cryptographic Operations | 12 | includes generation, loading/import, and key validation as separate behaviors |
 | PRST | Persistence Mechanisms | 6 | mechanical |
 | PRIV | Privilege Operations | 6 | "operations" is mechanical; "escalation" implies improper |
 | SYSI | System Inspection | 8 | "system inspection" is mechanical; "reconnaissance" would be a judgment |
@@ -45,7 +45,7 @@ Each category groups related atoms. The names are mechanical and judgment-free b
 
 ### Category Totals
 
-125 atoms across the 16 MCD-derived categories, plus 4 experimental atoms (MEM = 3, TYPE = 1) = 129 atoms total. No pending categories.
+127 atoms across the 16 MCD-derived categories, plus 4 experimental atoms (MEM = 3, TYPE = 1) = 131 atoms total. No pending categories.
 
 ## Idioms
 

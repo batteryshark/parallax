@@ -25,4 +25,6 @@ API keys, tokens, passwords, private keys, AWS access keys, or other authenticat
 
 ## Notes
 
+High entropy is not a prerequisite. A constant, all-zero buffer, repeated pattern, small private scalar, or public test key is still credential material when its role is established by use in authentication, signing, or encryption. Generic entropy-based secret discovery can miss precisely these cases. Record role and use, redact material from evidence output, and distinguish public parameters and isolated fixtures from production secrets.
+
 Provider-specific formats enable high-confidence identification. AWS access key IDs always start with `AKIA` (or `ASIA` for temporary credentials) followed by 16 alphanumeric characters. GitHub personal access tokens start with `ghp_` followed by 36 alphanumeric characters. These format signatures reduce false positives compared to generic high-entropy string detection. The presence of credential material in source versus binary versus configuration files carries different implications about the development process and exposure surface.

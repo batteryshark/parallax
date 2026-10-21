@@ -22,7 +22,7 @@ _SIG_ID_RE = re.compile(r"^sig\.[a-z0-9][a-z0-9_.-]*$")
 _GATE_ID_RE = re.compile(r"^gate\.[a-z0-9][a-z0-9_.-]*$")
 
 _STATUS = {"draft", "experimental", "stable", "deprecated"}
-_SURFACE = {"callee", "content"}
+_SURFACE = {"callee", "content", "binary-import"}
 _METHOD = {"static-source", "static-binary", "package-metadata"}
 _MATCH_MODE = {"exact", "base", "suffix", "exact_or_suffix", "substring", "regex"}
 _ON_MISSING = {"drop", "downweight", "tag"}
@@ -66,6 +66,7 @@ def _validate_context_gate(ctx: Any, where: str) -> list[str]:
     predicate_keys = (
         "all_text",
         "any_text",
+        "any_regex",
         "none_text",
         "imports_any",
         "imports_all",
@@ -112,14 +113,14 @@ def _validate_signature(sig: Any, where: str) -> list[str]:
     if not sig.get("summary"):
         errs.append(f"{where}.summary: must be a non-empty string")
 
-    # surface-conditional: callee needs match (not regex); content needs regex (not match)
-    if surface == "callee":
+    # Callee/binary-import need match (not regex); content needs regex (not match).
+    if surface in {"callee", "binary-import"}:
         if "match" not in sig:
-            errs.append(f"{where}: surface 'callee' requires 'match'")
+            errs.append(f"{where}: surface {surface!r} requires 'match'")
         else:
             errs += _validate_match(sig["match"], f"{where}.match")
         if "regex" in sig:
-            errs.append(f"{where}: surface 'callee' must not carry 'regex'")
+            errs.append(f"{where}: surface {surface!r} must not carry 'regex'")
     elif surface == "content":
         if not sig.get("regex"):
             errs.append(f"{where}: surface 'content' requires a non-empty 'regex'")

@@ -2,7 +2,7 @@
 
 ## Description
 
-Accesses cryptographically secure random number generators (CSPRNGs): `/dev/urandom`, `CryptGenRandom`, `SecRandomCopyBytes`, `crypto.getRandomValues()`, Python's `secrets` module, `openssl rand`, or equivalent platform-specific secure random sources. Distinguished from general-purpose RNG (`math.random`, `rand()`, `Random()`) by the cryptographic quality guarantee. Also covers detection of deliberately weak RNG, using predictable seeds or non-cryptographic generators for operations that should use CSPRNGs.
+Accesses random number generators intended for cryptographic use (CSPRNGs): `/dev/urandom`, `CryptGenRandom`, `SecRandomCopyBytes`, `crypto.getRandomValues()`, Python's `secrets` module, `openssl rand`, or equivalent platform-specific secure random sources. This records the source/API used, not a guarantee that its implementation, seeding, output handling, or deployment is correct.
 
 ## Detection Surface
 
@@ -15,7 +15,7 @@ Accesses cryptographically secure random number generators (CSPRNGs): `/dev/uran
 ## Disambiguation
 
 - **vs CRPT.KEYGEN**: RNG generates random bytes. KEYGEN produces structured key material (which may use RNG as an input). When random bytes are generated and directly used as a symmetric key, both atoms apply. When random bytes are used for non-key purposes (nonces, IVs, random identifiers), only CRPT.RNG applies.
-- **vs general-purpose RNG**: `math.random()`, `random.random()`, `rand()` are not CRPT.RNG, they don't provide cryptographic guarantees. CRPT.RNG applies specifically to CSPRNG access. However, the use of non-cryptographic RNG in a context that requires cryptographic randomness (generating encryption keys with `math.random`) is a notable observation, it indicates deliberately or accidentally weak cryptography.
+- **vs general-purpose RNG**: `Math.random()`, `random.random()`, `rand()` are not CRPT.RNG. When their output feeds key generation, record KEYGEN with the observed non-cryptographic source and value-flow evidence. Do not emit a CSPRNG observation merely because the consumer requires one.
 
 ## Structural Relationships
 
@@ -24,4 +24,4 @@ Accesses cryptographically secure random number generators (CSPRNGs): `/dev/uran
 
 ## Notes
 
-Whether CSPRNG or non-CSPRNG is used for a given purpose is a structural observation. Using `os.urandom()` for an encryption IV is expected. Using `random.randint()` for the same purpose indicates either a mistake or intentionally weak cryptography. The RNG source, the amount of randomness requested, and what the output feeds into are the key structural data points.
+The RNG source, seed/reseed behavior where observable, amount requested, handling of errors or short reads, substitutions, truncation, and output consumer are structural data. Source health tests and measurements of final key bytes answer different questions. Record unavailable provider details as unknown and leave quality/intent judgments to the lenses. See [cryptographic material investigation](../../../investigation/cryptographic-material.md).

@@ -26,3 +26,4 @@ Most compositions below are specifications. Four are wired in the `prlx` engine 
 | [BP-TYPOSQUAT](BP-TYPOSQUAT.md) | Typosquat / Dependency Confusion | `PKGM.PUBLISH` anomaly + payload |
 | [BP-LATERAL](BP-LATERAL.md) | Lateral Movement | Internal discovery + credential/privilege + action on new targets |
 | [BP-MITM](BP-MITM.md) | Traffic Interception | Trust degradation + traffic redirection |
+| [BP-CRYPTOWEAK](BP-CRYPTOWEAK.md) | Deliberate Cryptographic Weakening | Predictable/substituted material or protection bypass reaches consequential use, with independent evidence supporting deliberate weakening |

@@ -24,7 +24,7 @@
 
 ## CRPT.SYMENC
 
-9. **Is the IV or nonce random, fixed, or derived?** Fixed IV breaks confidentiality for repeated plaintexts. Victim-derived IV/nonce indicates intentional per-environment tracking. `[lens-neutral]`
+9. **Is the IV or nonce random, fixed, or derived, and what does the algorithm require?** Distinguish uniqueness from unpredictability; counter nonces can be appropriate, while nonce reuse under one GCM key is a serious failure. Trace the source and reuse scope without inferring intent from the construction alone. `[lens-neutral]`
 
 ## CRPT.ASYMENC
 
@@ -39,3 +39,19 @@
 13. **For `CRPT.KEYEX`: is there a corresponding protocol or handshake structure?** No handshake, no session state, no message framing = minimal covert channel rather than legitimate protocol implementation. `[lens-neutral]`
 
 14. **For `CRPT.KEYGEN` + system fingerprinting: is key material deterministic per-machine?** Keys derived from hostname, MAC address, or username produce per-victim encryption. Trace whether system properties feed into key derivation. `[MCD]`
+
+## Material, Admission, and Output Protection
+
+15. **Is the operation generation, import, unwrap, or construction from selected components?** Trace origin and key identity through transfers, recovery, activation and production use. `derive_private_key(4, curve)` constructs from a supplied scalar; it does not select a fresh random secret. `[lens-neutral]`
+
+16. **What is the decoded material's role?** Distinguish private scalars/secret keys from public parameters, nonces, sign padding and serialized framing. Check constants, repetitions, public test values, predictable seeds and truncation even when entropy-based secret discovery finds nothing. `[lens-neutral]`
+
+17. **What does each check establish and does failure prevent use?** Inspect KEYCHECK return values (including unsupported checks), exception paths, overrides and activation order. Range/pairwise validity does not prove unpredictable generation. Missing visible checks may be implemented by a provider; record unknown scope. `[lens-neutral]`
+
+18. **Are detection, rejection and alert delivery independently evidenced?** Test each with safe synthetic fixtures on generation/import/restore paths. Preserve coverage and timestamps, redact material, and avoid exporting production keys for analysis. `[lens-neutral]`
+
+19. **What supports deliberate weakening over a defect?** Seek linked unauthorized substitution, selective exceptions, deployment drift or alert suppression. A weak scalar, high impact or account name alone cannot identify an insider or establish intent. `[MCD]`
+
+20. **Does the output actually meet its required protection boundary?** Isolate the encoded payload from headers and other cleartext fields; trace encryption errors and bypass branches to the sink. Confirm with controlled known plaintext and authentication behavior, not a byte histogram alone. `[lens-neutral]`
+
+Use the [investigation contract](../../../investigation/cryptographic-material.md) for the full evidence requirements and acceptance cases.
