@@ -1,58 +1,50 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/mark-dark.png">
-    <img alt="Parallax logo" src="assets/mark.png" width="84">
-  </picture>
-</p>
+# Parallax
 
-<h1 align="center">Parallax</h1>
+<img src="assets/mark.png" alt="Parallax logo" width="84">
 
-<p align="center">A tool-agnostic model for reasoning about what code <strong>can do</strong>:<br>reading a system as affordances, decisions, and brittleness, not lines and defects.</p>
+Parallax is a tool-independent vocabulary and Python SDK for reasoning about what code can do. It separates mechanical observations, such as invoking a shell, from interpretations about maliciousness, trust decisions or operational risk. Multiple lenses can interpret the same facts while keeping severity separate from confidence and stating what would disprove a finding.
 
-No single viewpoint tells you what a system truly is. You need a judgment-free vocabulary for what code does, a set of interpretive lenses for what those behaviors mean, and an honest account of how sure you are and what would change that.
+## Requirements
 
-The model keeps fact and judgment in separate layers. An atom records a mechanical fact: `EXEC.SHELL` means "invokes a shell subprocess," never "suspicious." A lens supplies the judgment, reading the same facts through one question: is this malicious, what breaks if it is abused, where does it decide whom to trust. Severity (how bad this is, if the reading holds) stays separate from confidence (how sure we are), and every interpretation names what would disprove it.
+The taxonomy is Markdown and JSON/TOML data, readable without installing anything. The optional SDK requires Python 3.11+ and has no runtime dependencies. It matches already-extracted observations; it does not parse or scan source code itself.
 
-Three guardrails follow from that separation, and they hold everywhere in the model. Capability is not accusation: naming what code can do says nothing about intent. Suspicion is not proof: a lens reading carries a confidence and a disproof criterion, not a verdict. Absence of a finding is not a safety guarantee: every method of observation declares what it cannot see.
+## Install
 
-The model extends to agent surfaces. The tools and skills an agent holds are code, and they change what the agent can be tricked into doing. That risk is capability combined with steerability, not maliciousness. The same atoms describe what a tool set can reach, and the same lenses read what that reach means once a steerable agent holds it.
+```sh
+git clone https://github.com/batteryshark/parallax.git
+cd parallax
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -e ./parallax
+```
 
-## The layers
+Keep the taxonomy checkout available: the SDK reads its vocabulary and signature packs from it.
 
-| Layer | Question it answers |
-|---|---|
-| Ontology (atoms) | What does the code or system do? (judgment-free) |
-| Enrichment | What external facts add context to that? (judgment-free) |
-| Lens | Why does that behavior matter, from this viewpoint? |
-| Confidence | How sure are we, and what would disprove it? |
-| Investigation | What should we check next, and with which method? |
-| Response | What should someone do about it? |
+## Quick start
 
-The observation is shared; the judgment changes with the lens. A package install script that reaches the network is a malicious-code signal through the MCD lens, an expanded blast radius through the capability lens, and a build-fragility point through the architecture lens. Same fact, different reading.
+```python
+import parallax
 
-## What is here
+atoms = parallax.load_atoms()
+pack = parallax.load_signature_pack(parallax.resolve_source_callee_pack())
+print(pack.classify_callee("child_process.exec", "javascript"))
+print(parallax.list_lenses())
+```
 
-- [`ontology/`](ontology/): the judgment-free behavior vocabulary: 131 atoms across 18 categories (16 core plus the experimental MEM and TYPE), and the idioms that compose them. An atom records a mechanical fact (`EXEC.SHELL`, `NETW.HTTP`, `CRED.CLOUD`), never a verdict.
-- [`signatures/`](signatures/): machine-readable signature-pack contracts for stable mappings from observed code surfaces to ontology atoms. These are data, not parser mechanics; scanner implementations own extraction. The TOML packs are the source of record, and [`scripts/build-signature-json`](scripts/build-signature-json) regenerates their JSON mirrors.
-- [`enrichment/`](enrichment/): lens-neutral external facts that modify confidence, such as domain age, package provenance, and build drift. Like atoms, these are facts, not judgments; each lens decides whether a datum amplifies, attenuates, or is neutral to its reading.
-- [`lenses/`](lenses/): the interpretation layer. Each lens reads the shared atoms through one question: MCD (is this malicious?), decisions (where does it decide trust, dispatch, authority?), capability (blast radius if abused), curiosity (what is surprising for its stated purpose?), and architecture (brittleness and operational risk). Each lens keeps severity separate from confidence and states what would disprove a finding.
-- [`investigation/`](investigation/): the confidence algebra and the methods of observation, including their declared blind spots.
-- [Cryptographic material and protection boundaries](investigation/cryptographic-material.md): key generation/import provenance, validation enforcement, predictable secrets, monitoring gaps, and unexpected plaintext. Includes semantic acceptance cases and a sourced incident research note; scanner engines implement dataflow and measurements.
-- [`ARCHITECTURE.md`](ARCHITECTURE.md): the framework and its design philosophy.
+An atom records behavior, not intent. Apply a lens only after recording the observation and its limitations. Capability is not accusation, and no findings does not mean a system is safe.
 
-## Design principles
+## Configuration and key operations
 
-- Atoms are mechanical and lens-neutral. Anything that encodes intent (malicious, stealthy, suspicious) lives in a lens, never in the ontology.
-- Severity and confidence are independent dimensions, always reported separately.
-- Every interpretation is falsifiable: it names what would change the assessment.
-- Methods of observation carry their own blind spots, so silence is never read as safety.
+- `PRLX_TAXONOMY_ROOT` selects the taxonomy root containing `signatures/schema.json`.
+- `PRLX_SOURCE_CALLEE_PACK` selects an explicit callee signature pack.
+- `load_atoms()`, `load_lens()` and `list_lenses()` load the vocabulary and interpretations.
+- `validate_signature_pack(data)` returns validation errors for a pack.
+- `scripts/build-signature-json` regenerates JSON mirrors from the TOML packs.
 
-## Using it
+## Documentation
 
-The model is meant to be read, cited, and implemented. This repository is the source of record for the vocabulary, lenses, confidence model, investigation methods, and response guidance.
-
-An implementation maps observed code surfaces to ontology atoms, enriches those atoms with external context, then applies one or more lenses to produce an interpretation. The shared vocabulary keeps observations stable while different tools, reviews, or research workflows ask different questions of the same facts.
+Start with the [documentation index](docs/README.md), [SDK reference](parallax/README.md) and [architecture](ARCHITECTURE.md). The repository includes curated synthetic investigation examples; they are product examples, not results from your own code.
 
 ## License
 
-Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
+[Apache-2.0](LICENSE). See [NOTICE](NOTICE).
